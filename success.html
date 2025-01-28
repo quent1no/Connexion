@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compte Hacké</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Effet de paillettes */
+        @keyframes fall {
+            0% { transform: translateY(-100vh); }
+            100% { transform: translateY(100vh); }
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #ffd700; /* Couleur or */
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            animation: fall 3s linear infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <h1>PETIT FDP TU AS HACKE MON COMPTE</h1>
+        <p>MOI JE M'APPELLE MATTIAS, J'AI DEJA JOUÉ À CE JEUX, JE MANGE DE LA EL MORDJENE, LE SAVAIS TU ? OUI JE LE SAVAIS TU</p>
+        <button id="partyButton">FÊTE</button>
+    </div>
+
+    <script>
+        // Ajouter des paillettes au clic sur le bouton "FÊTE"
+        document.getElementById('partyButton').addEventListener('click', function() {
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = `${Math.random() * 100}vw`;
+                confetti.style.animationDuration = `${Math.random() * 2 + 1}s`;
+                document.body.appendChild(confetti);
+
+                // Supprimer les paillettes après l'animation
+                setTimeout(() => {
+                    confetti.remove();
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html>
