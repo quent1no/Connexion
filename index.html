@@ -221,6 +221,14 @@
         color: #333;
         box-shadow: 0 0 20px rgba(0,0,0,0.3);
     }
+    .game-clone {
+        transition: all 0.3s;
+        transform: scale(1) rotate(0deg);
+    }
+    
+    .game-clone:hover {
+        transform: scale(1.1) rotate(360deg);
+    }
     </style>
 </head>
 <body>
@@ -648,19 +656,18 @@ function startCloneGame() {
 
     // Créer des clones aléatoires
     const cloneInterval = setInterval(() => {
-        if(!cloneGame.active) clearInterval(cloneInterval);
-        
-        const clone = createClone();
-        cloneGame.clones.push(clone);
-        
-        setTimeout(() => {
-            if(clone.parentNode) {
-                clone.remove();
-                cloneGame.clones = cloneGame.clones.filter(c => c !== clone);
-            }
-        }, 3000);
-    }, 800);
-}
+    if(!cloneGame.active) clearInterval(cloneInterval);
+    
+    const clone = createClone();
+    cloneGame.clones.push(clone);
+    
+    setTimeout(() => {
+        if(clone.parentNode) {
+            clone.remove();
+            cloneGame.clones = cloneGame.clones.filter(c => c !== clone);
+        }
+    }, 3000);
+}, 200); // Changé de 800ms à 200ms (x4 plus rapide)
 
 function createClone() {
     const clone = document.createElement('button');
@@ -686,20 +693,28 @@ function endCloneGame() {
     cloneGame.active = false;
     const overlay = document.querySelector('.clone-game-overlay');
     
-    // Afficher les résultats
     overlay.innerHTML = `
         <div class="clone-game-instructions">
             <h2>⏰ TEMPS ÉCOULÉ! ⏰</h2>
             <p style="font-size: 1.5em">Score final: ${cloneGame.score}</p>
-            <p>${cloneGame.score > 20 ? '👑 Master des Clones!' : cloneGame.score > 10 ? 'Pas mal!' : 'Peut mieux faire...'} 😜</p>
+            <p>${getTauntMessage()}</p>
             <button onclick="startCloneGame()" style="font-size: 1.2em; margin: 15px; padding: 10px 20px;">
                 Rejouer?
             </button>
-            <button onclick="overlay.remove()" style="font-size: 1.2em; padding: 10px 20px;">
+            <button onclick="document.querySelector('.clone-game-overlay').remove()" style="font-size: 1.2em; padding: 10px 20px;">
                 Quitter
             </button>
         </div>
     `;
+}
+function getTauntMessage() {
+    const score = cloneGame.score;
+    if(score === 0) return '😭 T\'as rien touché!';
+    if(score < 5) return '👎 C\'est tout?';
+    if(score < 15) return '💩 Peut mieux faire!';
+    if(score < 30) return '👍 Pas mal!';
+    if(score < 50) return '🎯 Bon réflexes!';
+    return '👑 MAÎTRE DES CLONES!';
 }
     </script>
 </body>
