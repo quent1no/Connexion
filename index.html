@@ -612,64 +612,14 @@ function endGame() {
         window.location.href = 'perdu.html';
     }, 1000);
 }
-        let cloneGame = {
+let cloneGame = {
     active: false,
     score: 0,
     timeLeft: 15,
     clones: []
 };
 
-function startCloneGame() {
-    if(cloneGame.active) return;
-    
-    // Afficher les instructions
-    const play = confirm("🎮 CLONE ATTACK 🎮\n\nCLIQUEZ SUR UN MAX DE CLONES EN 15 SECONDES!\nChaque clone rapporte 1 point\nIls disparaissent après 3 secondes!\nPrêt à jouer?");
-    if(!play) return;
-
-    // Initialisation
-    cloneGame.active = true;
-    cloneGame.score = 0;
-    cloneGame.timeLeft = 15;
-    
-    // Créer l'interface
-    const overlay = document.createElement('div');
-    overlay.className = 'clone-game-overlay';
-    overlay.innerHTML = `
-        <div class="clone-game-ui">
-            <h2>Temps: <span id="cloneTimer">15</span>s</h2>
-            <h2>Score: <span id="cloneScore">0</span></h2>
-        </div>
-    `;
-    document.body.appendChild(overlay);
-    overlay.style.display = 'block';
-
-    // Démarrer le timer
-    const timerInterval = setInterval(() => {
-        cloneGame.timeLeft--;
-        document.getElementById('cloneTimer').textContent = cloneGame.timeLeft;
-        
-        if(cloneGame.timeLeft <= 0) {
-            endCloneGame();
-            clearInterval(timerInterval);
-        }
-    }, 1000);
-
-    // Créer des clones aléatoires
-    const cloneInterval = setInterval(() => {
-    if(!cloneGame.active) clearInterval(cloneInterval);
-    
-    const clone = createClone();
-    cloneGame.clones.push(clone);
-    
-    setTimeout(() => {
-        if(clone.parentNode) {
-            clone.remove();
-            cloneGame.clones = cloneGame.clones.filter(c => c !== clone);
-        }
-    }, 3000);
-}, 200); // Changé de 800ms à 200ms (x4 plus rapide)
-
-function createClone() {
+function createClone() { // DÉPLACÉ EN DEHORS DE startCloneGame
     const clone = document.createElement('button');
     clone.className = 'game-clone';
     clone.textContent = '🐑 CLONE!';
@@ -689,7 +639,7 @@ function createClone() {
     return clone;
 }
 
-function endCloneGame() {
+function endCloneGame() { // DÉPLACÉ EN DEHORS DE startCloneGame
     cloneGame.active = false;
     const overlay = document.querySelector('.clone-game-overlay');
     
@@ -707,7 +657,8 @@ function endCloneGame() {
         </div>
     `;
 }
-function getTauntMessage() {
+
+function getTauntMessage() { // DÉPLACÉ EN DEHORS DE startCloneGame
     const score = cloneGame.score;
     if(score === 0) return '😭 T\'as rien touché!';
     if(score < 5) return '👎 C\'est tout?';
@@ -716,6 +667,52 @@ function getTauntMessage() {
     if(score < 50) return '🎯 Bon réflexes!';
     return '👑 MAÎTRE DES CLONES!';
 }
+
+function startCloneGame() {
+    if(cloneGame.active) return;
+    
+    const play = confirm("🎮 CLONE ATTACK 🎮\n\nCLIQUEZ SUR UN MAX DE CLONES EN 15 SECONDES!\nChaque clone rapporte 1 point\nIls disparaissent après 3 secondes!\nPrêt à jouer?");
+    if(!play) return;
+
+    cloneGame.active = true;
+    cloneGame.score = 0;
+    cloneGame.timeLeft = 15;
+    
+    const overlay = document.createElement('div');
+    overlay.className = 'clone-game-overlay';
+    overlay.innerHTML = `
+        <div class="clone-game-ui">
+            <h2>Temps: <span id="cloneTimer">15</span>s</h2>
+            <h2>Score: <span id="cloneScore">0</span></h2>
+        </div>
+    `;
+    document.body.appendChild(overlay);
+    overlay.style.display = 'block';
+
+    const timerInterval = setInterval(() => {
+        cloneGame.timeLeft--;
+        document.getElementById('cloneTimer').textContent = cloneGame.timeLeft;
+        
+        if(cloneGame.timeLeft <= 0) {
+            endCloneGame();
+            clearInterval(timerInterval);
+        }
+    }, 1000);
+
+    const cloneInterval = setInterval(() => {
+        if(!cloneGame.active) clearInterval(cloneInterval);
+        
+        const clone = createClone();
+        cloneGame.clones.push(clone);
+        
+        setTimeout(() => {
+            if(clone.parentNode) {
+                clone.remove();
+                cloneGame.clones = cloneGame.clones.filter(c => c !== clone);
+            }
+        }, 3000);
+    }, 200);
+} // FERMETURE CORRECTE DE startCloneGame ICI
     </script>
 </body>
 </html>
