@@ -1,0 +1,72 @@
+<!-- login.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Connexion Secrète</title>
+    <style>
+        body {
+            background: #FF69B4;
+            font-family: 'Comic Sans MS', cursive;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        input {
+            margin: 10px;
+            padding: 10px;
+            border: 3px solid #FF69B4;
+            border-radius: 15px;
+            font-size: 1.2em;
+        }
+
+        button {
+            background: #FF69B4;
+            color: white;
+            padding: 10px 30px;
+            border: none;
+            border-radius: 20px;
+            font-size: 1.3em;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h2>Connexion Magique ✨</h2>
+        <form onsubmit="return checkCredentials(event)">
+            <input type="text" id="username" placeholder="Nom d'utilisateur" required><br>
+            <input type="password" id="password" placeholder="Mot de passe" required><br>
+            <button type="submit">Entrer dans la matrice 🌀</button>
+        </form>
+    </div>
+
+    <script>
+        function checkCredentials(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('username').value.toLowerCase();
+            const password = document.getElementById('password').value.toLowerCase();
+
+            // Vérifier si "pute" est présent dans l'identifiant ou le mot de passe
+            if(username.includes('pute') || password.includes('pute')) {
+                window.location.href = 'success.html';
+            } else {
+                alert('⚠️ Erreur : Le mot magique "pute" doit être présent dans l\'identifiant OU le mot de passe !');
+            }
+        }
+    </script>
+</body>
+</html>
