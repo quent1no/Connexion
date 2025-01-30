@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Perdu, nul!</title>
+    <style>
+        body {
+            background: #000;
+            color: #fff;
+            text-align: center;
+            font-family: 'Comic Sans MS', cursive;
+            padding: 50px;
+            overflow: hidden;
+        }
+        h1 {
+            font-size: 4em;
+            text-shadow: 0 0 10px #ff0000;
+            animation: shake 0.5s infinite;
+        }
+        img {
+            width: 200px;
+            animation: spin 2s linear infinite;
+            margin: 20px;
+        }
+        .taunt {
+            font-size: 2em;
+            color: #ff69b4;
+            text-shadow: 0 0 10px white;
+            margin: 20px;
+        }
+        #clownAudio {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            opacity: 0.5;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg) scale(2); }
+            to { transform: rotate(360deg) scale(0.5); }
+        }
+        
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+
+        .rainbow-text {
+            background-image: linear-gradient(to right, violet, indigo, blue, green, yellow, orange, red);
+            -webkit-background-clip: text;
+            color: transparent;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="rainbow-text">T'ES NUL! 😂</h1>
+    
+    <div class="taunt" id="tauntMessage"></div>
+    
+    <img src="https://media.giphy.com/media/l3q2EOu4nu1D8uJKU/giphy.gif" alt="Fail gif">
+    <img src="https://media.giphy.com/media/3orieSq7YJb2eNf04A/giphy.gif" alt="Clown gif">
+    
+    <audio id="clownAudio" autoplay loop>
+        <source src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3" type="audio/mpeg">
+    </audio>
+
+    <button onclick="window.location.href = 'index.html'" style="font-size: 2em; margin-top: 30px; padding: 15px; background: #ff69b4;">
+        Retente ta chance, pauvre noob! 😜
+    </button>
+
+    <script>
+        const taunts = [
+            "Même ma grand-mère joue mieux! 👵",
+            "C'est ça ton niveau? 😹",
+            "Tu devrais retourner à la maternelle! 🧒",
+            "T'as nourri le serpent ou quoi? 🐍",
+            "Bravo champion... de la nullité! 🏆",
+            "On dirait un singe qui tape au clavier! 🐒",
+            "Le score le plus triste de l'histoire... 😢",
+            "C'est pas grave, tu peux pleurer! 😭"
+        ];
+
+        // Choisir une moquerie aléatoire
+        document.getElementById('tauntMessage').textContent = taunts[Math.floor(Math.random() * taunts.length)];
+
+        // Ajouter un son de rire moqueur aléatoire
+        const laughSounds = [
+            'https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3',
+            'https://assets.mixkit.co/active_storage/sfx/3005/3005-preview.mp3',
+            'https://assets.mixkit.co/active_storage/sfx/1062/1062-preview.mp3'
+        ];
+
+        const audioPlayer = document.getElementById('clownAudio');
+        audioPlayer.src = laughSounds[Math.floor(Math.random() * laughSounds.length)];
+        audioPlayer.volume = 0.7;
+
+        // Activer le son au clic (pour contourner les restrictions d'autoplay)
+        document.body.addEventListener('click', () => {
+            audioPlayer.play();
+        });
+    </script>
+</body>
+</html>
