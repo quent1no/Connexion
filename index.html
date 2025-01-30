@@ -8,6 +8,8 @@
             background: #FF69B4;
             font-family: 'Comic Sans MS', cursive;
             text-align: center;
+            margin: 0;
+            padding: 20px;
         }
         
         .btn-container {
@@ -62,6 +64,7 @@
             font-size: 5em;
             opacity: 0;
         }
+
         .nuage-prout {
             position: fixed;
             top: 50%;
@@ -76,6 +79,49 @@
         @keyframes fadeCloud {
             0% { opacity: 1; filter: blur(0); transform: translate(-50%, -50%) scale(3); }
             100% { opacity: 0; filter: blur(20px); transform: translate(-50%, -50%) scale(0); }
+        }
+
+        .chat-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 1000;
+        }
+
+        .chat-messages {
+            height: 200px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .chat-input {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-top: 1px solid #ddd;
+            border-radius: 0 0 10px 10px;
+        }
+
+        .message {
+            margin: 5px 0;
+            padding: 8px;
+            border-radius: 15px;
+        }
+
+        .user-message {
+            background: #FF69B4;
+            color: white;
+            margin-left: 30px;
+        }
+
+        .bot-message {
+            background: #f1f1f1;
+            margin-right: 30px;
         }
 
         @keyframes disco {
@@ -98,6 +144,12 @@
         <button onclick="creeClone()">🐑 Clonage!</button>
         <button onmouseover="faitRotation(this)">🌀 Tourne!</button>
         <button onclick="jouerSon()">💨 Prout!</button>
+        <button onclick="toggleChat()">💬 Chatbot!</button>
+    </div>
+
+    <div class="chat-container" id="chatContainer">
+        <div class="chat-messages" id="chatMessages"></div>
+        <input type="text" class="chat-input" id="chatInput" placeholder="Tapez votre message..." onkeypress="handleChatInput(event)">
     </div>
 
     <div id="zoneEffet"></div>
@@ -105,9 +157,11 @@
     <audio id="sonProut">
         <source src="https://www.soundjay.com/human/fart-01.mp3" type="audio/mpeg">
     </audio>
+
     <audio id="sonDisco">
-        <source src="https://assets.mixkit.co/music/preview/mixkit-70s-funky-boogie-24.mp3" type="audio/mpeg">
+        <source src="disco.mp3" type="audio/mpeg">
     </audio>
+
     <script>
         function faitPeur() {
             const zone = document.getElementById('zoneEffet');
@@ -147,7 +201,14 @@
 
         function modeDisco() {
             document.body.style.animation = 'disco 0.2s infinite';
-            setTimeout(() => document.body.style.animation = '', 3000);
+            const audioDisco = document.getElementById('sonDisco');
+            audioDisco.currentTime = 0;
+            audioDisco.play();
+            
+            setTimeout(() => {
+                document.body.style.animation = '';
+                audioDisco.pause();
+            }, 15000);
         }
 
         function creeClone() {
@@ -163,45 +224,57 @@
         }
 
         function jouerSon() {
-            document.getElementById('sonProut').play();
-        }
-
-        // Ajout d'animation disco dynamique
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes disco {
-                0% { background: #ff0000; }
-                25% { background: #00ff00; }
-                50% { background: #0000ff; }
-                75% { background: #ffff00; }
-            }
-        `;
-        document.head.appendChild(style);
-        function modeDisco() {
-            document.body.style.animation = 'disco 0.2s infinite';
-            const audioDisco = document.getElementById('sonDisco');
-            audioDisco.currentTime = 0;
-            audioDisco.play();
-            
-            setTimeout(() => {
-                document.body.style.animation = '';
-                audioDisco.pause();
-            }, 15000);
-        }
-
-        function jouerSon() {
             const prout = document.getElementById('sonProut');
             prout.currentTime = 0;
             prout.play();
             
-            // Ajout du nuage vert
             const nuage = document.createElement('div');
             nuage.className = 'nuage-prout';
             nuage.textContent = '💨';
             nuage.style.color = '#00ff0080';
             document.body.appendChild(nuage);
-            
             setTimeout(() => nuage.remove(), 5000);
+        }
+
+        function toggleChat() {
+            const chat = document.getElementById('chatContainer');
+            chat.style.display = chat.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function handleChatInput(event) {
+            if (event.key === 'Enter') {
+                const input = event.target;
+                const message = input.value.trim();
+                if (message) {
+                    addMessage(message, 'user');
+                    setTimeout(() => botResponse(message), 500);
+                    input.value = '';
+                }
+            }
+        }
+
+        function addMessage(text, sender) {
+            const messages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            messageDiv.textContent = text;
+            messages.appendChild(messageDiv);
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        function botResponse(userMessage) {
+            const responses = {
+                'bonjour': 'Salut! Comment ça va? 😊',
+                'hello': 'Hi there! Ready to party? 🎉',
+                'coucou': 'Coucou toi! Quoi de neuf? 🦄',
+                'bye': 'À bientôt! N\'oublie pas de danser! 💃'
+            };
+
+            const lowerMsg = userMessage.toLowerCase();
+            const response = responses[lowerMsg] || 
+                'Désolé, je suis un chatbot en folie! Répète ça autrement? 🤪';
+
+            addMessage(response, 'bot');
         }
     </script>
 </body>
