@@ -221,14 +221,6 @@
         color: #333;
         box-shadow: 0 0 20px rgba(0,0,0,0.3);
     }
-    .game-clone {
-        transition: all 0.3s;
-        transform: scale(1) rotate(0deg);
-    }
-    
-    .game-clone:hover {
-        transform: scale(1.1) rotate(360deg);
-    }
     </style>
 </head>
 <body>
@@ -632,7 +624,7 @@ function createClone() { // DÉPLACÉ EN DEHORS DE startCloneGame
         document.getElementById('cloneScore').textContent = cloneGame.score;
         clone.remove();
         clone.style.transform = 'scale(2)';
-        setTimeout(() => clone.remove(), 200);
+        setTimeout(() => clone.remove(), 300);
     };
 
     document.querySelector('.clone-game-overlay').appendChild(clone);
