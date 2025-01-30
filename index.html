@@ -333,7 +333,7 @@
         let closestWord = msg;
         for (let word of dictionary) {
             const distance = levenshtein(msg, word);
-            if (distance < minDistance && distance <= 2) { // Tolère 2 erreurs max
+            if (distance < minDistance && distance <= 1) { // Tolère 2 erreurs max
                 minDistance = distance;
                 closestWord = word;
             }
