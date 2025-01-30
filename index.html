@@ -298,38 +298,69 @@
         }
 
         function botResponse(userMessage) {
-            const responses = [
-                { patterns: [/bonjour/i, /salut/i, /hey/i], replies: ["Salut! Comment ça va? 😊", "Coucou! Bien dormi? ☀️", "Yo! Prêt pour une belle journée? 😃"] },
-                { patterns: [/hello/i, /hi/i, /yo/i], replies: ["Hi there! Ready to party? 🎉", "Hello! How’s your day? 🌞", "Yo! Let’s go! 🚀"] },
-                { patterns: [/coucou/i, /cc/i], replies: ["Coucou toi! Quoi de neuf? 🦄", "Coucouuuu! Ça fait plaisir de te voir! 🎈", "Hey coucou! Comment tu vas? 💕"] },
-                { patterns: [/bye/i, /au revoir/i, /ciao/i], replies: ["À bientôt! N'oublie pas de danser! 💃", "Ciao ciao! Reviens vite! 😘", "Bye bye! Prends soin de toi! 💖"] },
-                { patterns: [/comment ça va/i, /ça va/i, /ça roule/i], replies: ["Nickel et toi? 😎", "Ça roule comme un skateboard! 🛹", "Comme un lundi… mais j’ai du café! ☕"] },
-                { patterns: [/merci/i, /thanks/i], replies: ["Avec plaisir! 😊", "De rien! 😃", "Tout pour toi! 💖"] },
-                { patterns: [/blague/i, /raconte une blague/i], replies: ["Pourquoi les plongeurs plongent-ils toujours en arrière? Parce que s’ils plongent en avant, ils tombent dans le bateau! 🤣", "C’est l’histoire d’un pingouin qui respire par les fesses… Un jour il s’assoit et il meurt. 🐧💀"] }
-            ];
+    const responses = [
+        { patterns: ["bonjour", "salut", "hey", "bjr", "slt"], replies: ["Salut! Comment ça va? 😊", "Coucou! Bien dormi? ☀️", "Yo! Prêt pour une belle journée? 😃"] },
+        { patterns: ["hello", "hi", "yo"], replies: ["Hi there! Ready to party? 🎉", "Hello! How’s your day? 🌞", "Yo! Let’s go! 🚀"] },
+        { patterns: ["coucou", "cc"], replies: ["Coucou toi! Quoi de neuf? 🦄", "Coucouuuu! Ça fait plaisir de te voir! 🎈", "Hey coucou! Comment tu vas? 💕"] },
+        { patterns: ["bye", "au revoir", "ciao", "à plus", "adieu"], replies: ["À bientôt! N'oublie pas de danser! 💃", "Ciao ciao! Reviens vite! 😘", "Bye bye! Prends soin de toi! 💖"] },
+        { patterns: ["comment ça va", "ça va", "ça roule", "quoi de neuf"], replies: ["Nickel et toi? 😎", "Ça roule comme un skateboard! 🛹", "Comme un lundi… mais j’ai du café! ☕"] },
+        { patterns: ["merci", "thanks", "thx", "merciii"], replies: ["Avec plaisir! 😊", "De rien! 😃", "Tout pour toi! 💖"] },
+        { patterns: ["blague", "raconte une blague", "une blague", "blg"], replies: ["Pourquoi les plongeurs plongent-ils toujours en arrière? Parce que s’ils plongent en avant, ils tombent dans le bateau! 🤣", "C’est l’histoire d’un pingouin qui respire par les fesses… Un jour il s’assoit et il meurt. 🐧💀"] }
+    ];
 
-            const badWords = [
-                /ta gueule/i, /ferme ta/i, /connard/i, /conasse/i, /fdp/i, /enculé/i, 
-                /salope/i, /pute/i, /bâtard/i, /abruti/i, /débile/i, /crétin/i, /merde/i
-            ];
+    const badWords = [
+        "ta gueule", "ferme ta", "connard", "conasse", "fdp", "enculé", 
+        "salope", "pute", "bâtard", "abruti", "débile", "crétin", "merde"
+    ];
 
-            const lowerMsg = userMessage.toLowerCase().trim();
-
-            if (badWords.some(pattern => pattern.test(lowerMsg))) {
-                addMessage("TU CROIS T'ES QUI MEC, BEIGNON SERAIS PAS FIER DE TOI 😤", 'bot');
-                return;
+    function levenshtein(a, b) {
+        const tmp = Array(b.length + 1).fill().map((_, i) => i);
+        let prev, val;
+        for (let i = 1; i <= a.length; i++) {
+            prev = i;
+            for (let j = 1; j <= b.length; j++) {
+                val = a[i - 1] === b[j - 1] ? tmp[j - 1] : Math.min(tmp[j - 1] + 1, prev + 1, tmp[j] + 1);
+                tmp[j - 1] = prev;
+                prev = val;
             }
-
-            for (let entry of responses) {
-                if (entry.patterns.some(pattern => pattern.test(lowerMsg))) {
-                    const reply = entry.replies[Math.floor(Math.random() * entry.replies.length)];
-                    addMessage(reply, 'bot');
-                    return;
-                }
-            }
-
-            addMessage("Désolé, je suis un chatbot en folie! Répète ça autrement? 🤪", 'bot');
+            tmp[b.length] = prev;
         }
+        return tmp[b.length];
+    }
+
+    function correctMessage(msg, dictionary) {
+        let minDistance = Infinity;
+        let closestWord = msg;
+        for (let word of dictionary) {
+            const distance = levenshtein(msg, word);
+            if (distance < minDistance && distance <= 2) { // Tolère 2 erreurs max
+                minDistance = distance;
+                closestWord = word;
+            }
+        }
+        return closestWord;
+    }
+
+    let lowerMsg = userMessage.toLowerCase().trim();
+
+    // Vérification des insultes
+    if (badWords.some(badWord => lowerMsg.includes(badWord))) {
+        addMessage("TU CROIS T'ES QUI MEC, BEIGNON SERAIS PAS FIER DE TOI 😤", 'bot');
+        return;
+    }
+
+    // Correction des fautes de frappe et correspondance
+    for (let entry of responses) {
+        let correctedMsg = correctMessage(lowerMsg, entry.patterns);
+        if (entry.patterns.includes(correctedMsg)) {
+            const reply = entry.replies[Math.floor(Math.random() * entry.replies.length)];
+            addMessage(reply, 'bot');
+            return;
+        }
+    }
+
+    addMessage("Désolé, je suis un chatbot en folie! Répète ça autrement? 🤪", 'bot');
+}
     </script>
 </body>
 </html>
