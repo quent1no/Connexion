@@ -142,6 +142,39 @@
             0%, 100% { transform: translate(-50%, -50%) scale(1); }
             50% { transform: translate(-50%, -50%) scale(1.2); }
         }
+        #gameCanvas {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border: 3px solid #fff;
+        box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        display: none;
+        background: rgba(0,0,0,0.8);
+    }
+
+    .game-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: none;
+        z-index: 1001;
+    }
+
+    .score-display {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: white;
+        font-size: 2em;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        z-index: 1002;
+        display: none;
+    }    
     </style>
 </head>
 <body>
@@ -157,6 +190,7 @@
         <button onmouseover="faitRotation(this)">🌀 Tourne!</button>
         <button onclick="jouerSon()">💨 Prout!</button>
         <button onclick="toggleChat()">💬 Chatbot!</button>
+        <button onclick="startSnakeGame()">🐍 Snake Game!</button>
     </div>
 
     <div class="chat-container" id="chatContainer">
@@ -333,7 +367,7 @@
         let closestWord = msg;
         for (let word of dictionary) {
             const distance = levenshtein(msg, word);
-            if (distance < minDistance && distance <= 1) { // Tolère 2 erreurs max
+            if (distance < minDistance && distance <= 2) { // Tolère 2 erreurs max
                 minDistance = distance;
                 closestWord = word;
             }
@@ -360,6 +394,169 @@
     }
 
     addMessage("Désolé, je suis un chatbot en folie! Répète ça autrement? 🤪", 'bot');
+}
+        let snakeGame = {
+    canvas: null,
+    ctx: null,
+    snake: null,
+    food: null,
+    direction: 'right',
+    nextDirection: 'right',
+    gridSize: 20,
+    gameLoop: null,
+    score: 0
+};
+
+function startSnakeGame() {
+    // Création des éléments du jeu
+    snakeGame.canvas = document.createElement('canvas');
+    snakeGame.canvas.id = 'gameCanvas';
+    snakeGame.canvas.width = 600;
+    snakeGame.canvas.height = 400;
+    document.body.appendChild(snakeGame.canvas);
+    
+    const overlay = document.createElement('div');
+    overlay.className = 'game-overlay';
+    document.body.appendChild(overlay);
+    
+    const scoreDisplay = document.createElement('div');
+    scoreDisplay.className = 'score-display';
+    document.body.appendChild(scoreDisplay);
+
+    // Initialisation
+    snakeGame.ctx = snakeGame.canvas.getContext('2d');
+    snakeGame.snake = [{x: 5, y: 5}];
+    snakeGame.score = 0;
+    snakeGame.direction = 'right';
+    snakeGame.nextDirection = 'right';
+    
+    // Position initiale de la nourriture
+    placeFood();
+    
+    // Affichage des éléments
+    snakeGame.canvas.style.display = 'block';
+    overlay.style.display = 'block';
+    scoreDisplay.style.display = 'block';
+    scoreDisplay.textContent = `Score: ${snakeGame.score}`;
+
+    // Gestion des contrôles
+    document.addEventListener('keydown', handleKeyPress);
+
+    // Démarrage du jeu
+    snakeGame.gameLoop = setInterval(gameStep, 100);
+}
+
+function handleKeyPress(e) {
+    switch(e.key) {
+        case 'ArrowUp':
+            if (snakeGame.direction !== 'down') snakeGame.nextDirection = 'up';
+            break;
+        case 'ArrowDown':
+            if (snakeGame.direction !== 'up') snakeGame.nextDirection = 'down';
+            break;
+        case 'ArrowLeft':
+            if (snakeGame.direction !== 'right') snakeGame.nextDirection = 'left';
+            break;
+        case 'ArrowRight':
+            if (snakeGame.direction !== 'left') snakeGame.nextDirection = 'right';
+            break;
+    }
+}
+
+function gameStep() {
+    snakeGame.direction = snakeGame.nextDirection;
+    const head = {...snakeGame.snake[0]};
+
+    // Déplacement de la tête
+    switch(snakeGame.direction) {
+        case 'up': head.y--; break;
+        case 'down': head.y++; break;
+        case 'left': head.x--; break;
+        case 'right': head.x++; break;
+    }
+
+    // Vérification des collisions
+    if (isCollision(head)) {
+        endGame();
+        return;
+    }
+
+    snakeGame.snake.unshift(head);
+
+    // Vérification de la nourriture
+    if (head.x === snakeGame.food.x && head.y === snakeGame.food.y) {
+        snakeGame.score += 10;
+        document.querySelector('.score-display').textContent = `Score: ${snakeGame.score}`;
+        placeFood();
+    } else {
+        snakeGame.snake.pop();
+    }
+
+    drawGame();
+}
+
+function isCollision(pos) {
+    // Collision avec les murs
+    if (pos.x < 0 || pos.x >= snakeGame.canvas.width / snakeGame.gridSize ||
+        pos.y < 0 || pos.y >= snakeGame.canvas.height / snakeGame.gridSize) {
+        return true;
+    }
+
+    // Collision avec soi-même
+    return snakeGame.snake.some((segment, index) => 
+        index !== 0 && segment.x === pos.x && segment.y === pos.y
+    );
+}
+
+function drawGame() {
+    // Effacer le canvas
+    snakeGame.ctx.fillStyle = 'rgba(0,0,0,0.8)';
+    snakeGame.ctx.fillRect(0, 0, snakeGame.canvas.width, snakeGame.canvas.height);
+
+    // Dessiner le serpent
+    snakeGame.ctx.fillStyle = '#00ff00';
+    snakeGame.snake.forEach(segment => {
+        snakeGame.ctx.fillRect(
+            segment.x * snakeGame.gridSize,
+            segment.y * snakeGame.gridSize,
+            snakeGame.gridSize - 2,
+            snakeGame.gridSize - 2
+        );
+    });
+
+    // Dessiner la nourriture
+    snakeGame.ctx.fillStyle = '#ff0000';
+    snakeGame.ctx.fillRect(
+        snakeGame.food.x * snakeGame.gridSize,
+        snakeGame.food.y * snakeGame.gridSize,
+        snakeGame.gridSize - 2,
+        snakeGame.gridSize - 2
+    );
+}
+
+function placeFood() {
+    snakeGame.food = {
+        x: Math.floor(Math.random() * (snakeGame.canvas.width / snakeGame.gridSize)),
+        y: Math.floor(Math.random() * (snakeGame.canvas.height / snakeGame.gridSize))
+    };
+    // Vérifier que la nourriture n'est pas sur le serpent
+    if (snakeGame.snake.some(segment => 
+        segment.x === snakeGame.food.x && segment.y === snakeGame.food.y)) {
+        placeFood();
+    }
+}
+
+function endGame() {
+    clearInterval(snakeGame.gameLoop);
+    document.removeEventListener('keydown', handleKeyPress);
+    
+    // Supprimer les éléments du jeu
+    document.querySelectorAll('#gameCanvas, .game-overlay, .score-display').forEach(el => el.remove());
+    
+    // Redirection après un court délai
+    setTimeout(() => {
+        window.location.href = 'perdu.html';
+    }, 1000);
 }
     </script>
 </body>
