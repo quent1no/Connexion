@@ -273,8 +273,21 @@
         { patterns: [/blague/i, /raconte une blague/i], replies: ["Pourquoi les plongeurs plongent-ils toujours en arrière? Parce que s’ils plongent en avant, ils tombent dans le bateau! 🤣", "C’est l’histoire d’un pingouin qui respire par les fesses… Un jour il s’assoit et il meurt. 🐧💀"] }
     ];
 
+    // Liste des insultes à détecter
+    const badWords = [
+        /ta gueule/i, /ferme ta/i, /connard/i, /conasse/i, /fdp/i, /enculé/i, /salope/i, 
+        /pute/i, /bâtard/i, /abruti/i, /débile/i, /crétin/i, /merde/i
+    ];
+
     const lowerMsg = userMessage.toLowerCase().trim();
 
+    // Vérifier si le message contient une insulte
+    if (badWords.some(pattern => pattern.test(lowerMsg))) {
+        addMessage("TU CROIS T'ES QUI MEC, BEIGNON SERAIS PAS FIER DE TOI 😤", 'bot');
+        return;
+    }
+
+    // Vérifier les autres réponses normales
     for (let entry of responses) {
         if (entry.patterns.some(pattern => pattern.test(lowerMsg))) {
             const reply = entry.replies[Math.floor(Math.random() * entry.replies.length)];
@@ -286,6 +299,7 @@
     // Si aucun motif ne correspond
     addMessage("Désolé, je suis un chatbot en folie! Répète ça autrement? 🤪", 'bot');
 }
+
     </script>
 </body>
 </html>
