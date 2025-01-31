@@ -142,85 +142,88 @@
             0%, 100% { transform: translate(-50%, -50%) scale(1); }
             50% { transform: translate(-50%, -50%) scale(1.2); }
         }
+
         #gameCanvas {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        border: 3px solid #fff;
-        box-shadow: 0 0 20px rgba(0,0,0,0.5);
-        display: none;
-        background: rgba(0,0,0,0.8);
-    }
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 3px solid #fff;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            display: none;
+            background: rgba(0,0,0,0.8);
+        }
 
-    .game-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.5);
-        display: none;
-        z-index: 1001;
-    }
+        .game-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            z-index: 1001;
+        }
 
-    .score-display {
-        position: fixed;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        color: white;
-        font-size: 2em;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        z-index: 1002;
-        display: none;
-    }    
+        .score-display {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 2em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            z-index: 1002;
+            display: none;
+        }
+
         .clone-game-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.7);
-        display: none;
-        z-index: 2000;
-    }
-    
-    .clone-game-ui {
-        position: fixed;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        color: white;
-        text-align: center;
-        z-index: 2001;
-    }
-    
-    .game-clone {
-        position: fixed;
-        cursor: pointer;
-        animation: cloneSpawn 0.5s ease-out;
-        padding: 15px;
-        border-radius: 30px;
-        font-size: 1.2em;
-        transform: scale(1);
-        transition: transform 0.2s;
-    }
-    
-    @keyframes cloneSpawn {
-        from { transform: scale(0); opacity: 0; }
-        to { transform: scale(1); opacity: 1; }
-    }
-    
-    .clone-game-instructions {
-        background: white;
-        padding: 20px;
-        border-radius: 20px;
-        max-width: 500px;
-        margin: 100px auto;
-        color: #333;
-        box-shadow: 0 0 20px rgba(0,0,0,0.3);
-    }
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            z-index: 2000;
+        }
+        
+        .clone-game-ui {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            text-align: center;
+            z-index: 2001;
+        }
+        
+        .game-clone {
+            position: fixed;
+            cursor: pointer;
+            animation: cloneSpawn 0.5s ease-out;
+            padding: 15px;
+            border-radius: 30px;
+            font-size: 1.2em;
+            transform: scale(1);
+            transition: transform 0.2s;
+        }
+        
+        @keyframes cloneSpawn {
+            from { transform: scale(0); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        .clone-game-instructions {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            max-width: 500px;
+            margin: 100px auto;
+            color: #333;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+        }
+
     </style>
 </head>
 <body>
@@ -237,6 +240,9 @@
         <button onclick="jouerSon()">💨 Prout!</button>
         <button onclick="toggleChat()">💬 Chatbot!</button>
         <button onclick="startSnakeGame()">🐍 Snake Game!</button>
+        
+        <!-- NOUVEAU BOUTON RAT -->
+        <button onclick="joueRat()">🐀 Rat!</button>
     </div>
 
     <div class="chat-container" id="chatContainer">
@@ -245,12 +251,17 @@
     </div>
 
     <div class="btn-container">
-        <!-- Ajout du bouton connexion -->
+        <!-- Bouton connexion -->
         <button onclick="window.location.href='login.html'">🔒 Connexion</button>
-        <!-- [Tous les autres boutons] -->
     </div>
+
     <div id="zoneEffet"></div>
 
+    <!-- Vidéo cachée au départ -->
+    <video id="ratVideo" style="display: none; max-width: 90vw; max-height: 60vh;" controls>
+        <source src="https://www.cjoint.com/doc/25_01/OAFmyEhIoFH_youtube-8fnpxU-sQ9Y-1280x720-h264.mp4" type="video/mp4">
+        Votre navigateur ne supporte pas la balise vidéo.
+    </video>
     
     <audio id="sonProut">
         <source src="https://www.soundjay.com/human/fart-01.mp3" type="audio/mpeg">
@@ -261,7 +272,8 @@
     </audio>
 
     <script>
-        // Fonctions des boutons
+        // =================== FONCTIONS DES BOUTONS PRINCIPAUX ===================
+
         function faitPeur() {
             const zone = document.getElementById('zoneEffet');
             zone.innerHTML = '';
@@ -325,14 +337,6 @@
             }
         }
 
-        function creeClone() {
-            const clone = document.createElement('button');
-            clone.textContent = '🐑 Clone!';
-            clone.style.background = `hsl(${Math.random() * 360}, 70%, 70%)`;
-            clone.onclick = () => clone.remove();
-            document.querySelector('.btn-container').appendChild(clone);
-        }
-
         function faitRotation(btn) {
             btn.style.transform = `rotate(${Math.random() * 360}deg)`;
         }
@@ -350,7 +354,14 @@
             setTimeout(() => nuage.remove(), 5000);
         }
 
-        // Chatbot
+        // =================== BOUTON "RAT" QUI LANCE LA VIDÉO ===================
+        function joueRat() {
+            const ratVideo = document.getElementById('ratVideo');
+            ratVideo.style.display = 'block';  // On l'affiche
+            ratVideo.play();                   // Et on lance la lecture
+        }
+
+        // =================== CHATBOT ===================
         function toggleChat() {
             const chat = document.getElementById('chatContainer');
             chat.style.display = chat.style.display === 'none' ? 'block' : 'none';
@@ -378,333 +389,337 @@
         }
 
         function botResponse(userMessage) {
-    const responses = [
-        { patterns: ["bonjour", "salut", "hey", "bjr", "slt"], replies: ["Salut! Comment ça va? 😊", "Coucou! Bien dormi? ☀️", "Yo! Prêt pour une belle journée? 😃", "bodycount ?"] },
-        { patterns: ["hello", "hi", "yo"], replies: ["Hi there! Ready to party? 🎉", "Hello! How’s your day? 🌞", "Yo! Let’s go! 🚀", "bodycount ?"] },
-        { patterns: ["coucou", "cc"], replies: ["Coucou toi! Quoi de neuf? 🦄", "Coucouuuu! Ça fait plaisir de te voir! 🎈", "Hey coucou! Comment tu vas? 💕", "bodycount ?"] },
-        { patterns: ["bye", "au revoir", "ciao", "à plus", "adieu"], replies: ["À bientôt! N'oublie pas de danser! 💃", "Ciao ciao! Reviens vite! 😘", "Bye bye! Prends soin de toi! 💖", "bodycount ?"] },
-        { patterns: ["comment ça va", "ça va", "ça roule", "quoi de neuf"], replies: ["Nickel et toi? 😎", "Ça roule comme un skateboard! 🛹", "Comme un lundi… mais j’ai du café! ☕", "bodycount ?"] },
-        { patterns: ["merci", "thanks", "thx", "merciii"], replies: ["Avec plaisir! 😊", "De rien! 😃", "Tout pour toi! 💖", "bodycount ?"] },
-        { patterns: ["blague", "raconte une blague", "une blague", "blg"], replies: ["Pourquoi les plongeurs plongent-ils toujours en arrière? Parce que s’ils plongent en avant, ils tombent dans le bateau! 🤣", "C’est l’histoire d’un pingouin qui respire par les fesses… Un jour il s’assoit et il meurt. 🐧💀", "Ton bodycount"] }
-    ];
+            const responses = [
+                { patterns: ["bonjour", "salut", "hey", "bjr", "slt"], replies: ["Salut! Comment ça va? 😊", "Coucou! Bien dormi? ☀️", "Yo! Prêt pour une belle journée? 😃", "bodycount ?"] },
+                { patterns: ["hello", "hi", "yo"], replies: ["Hi there! Ready to party? 🎉", "Hello! How’s your day? 🌞", "Yo! Let’s go! 🚀", "bodycount ?"] },
+                { patterns: ["coucou", "cc"], replies: ["Coucou toi! Quoi de neuf? 🦄", "Coucouuuu! Ça fait plaisir de te voir! 🎈", "Hey coucou! Comment tu vas? 💕", "bodycount ?"] },
+                { patterns: ["bye", "au revoir", "ciao", "à plus", "adieu"], replies: ["À bientôt! N'oublie pas de danser! 💃", "Ciao ciao! Reviens vite! 😘", "Bye bye! Prends soin de toi! 💖", "bodycount ?"] },
+                { patterns: ["comment ça va", "ça va", "ça roule", "quoi de neuf"], replies: ["Nickel et toi? 😎", "Ça roule comme un skateboard! 🛹", "Comme un lundi… mais j’ai du café! ☕", "bodycount ?"] },
+                { patterns: ["merci", "thanks", "thx", "merciii"], replies: ["Avec plaisir! 😊", "De rien! 😃", "Tout pour toi! 💖", "bodycount ?"] },
+                { patterns: ["blague", "raconte une blague", "une blague", "blg"], replies: ["Pourquoi les plongeurs plongent-ils toujours en arrière? Parce que s’ils plongent en avant, ils tombent dans le bateau! 🤣", "C’est l’histoire d’un pingouin qui respire par les fesses… Un jour il s’assoit et il meurt. 🐧💀", "Ton bodycount"] }
+            ];
 
-    const badWords = [
-        "ta gueule", "ferme ta", "connard", "conasse", "fdp", "enculé", 
-        "salope", "pute", "bâtard", "abruti", "débile", "crétin", "merde"
-    ];
+            const badWords = [
+                "ta gueule", "ferme ta", "connard", "conasse", "fdp", "enculé", 
+                "salope", "pute", "bâtard", "abruti", "débile", "crétin", "merde"
+            ];
 
-    function levenshtein(a, b) {
-        const tmp = Array(b.length + 1).fill().map((_, i) => i);
-        let prev, val;
-        for (let i = 1; i <= a.length; i++) {
-            prev = i;
-            for (let j = 1; j <= b.length; j++) {
-                val = a[i - 1] === b[j - 1] ? tmp[j - 1] : Math.min(tmp[j - 1] + 1, prev + 1, tmp[j] + 1);
-                tmp[j - 1] = prev;
-                prev = val;
+            function levenshtein(a, b) {
+                const tmp = Array(b.length + 1).fill().map((_, i) => i);
+                let prev, val;
+                for (let i = 1; i <= a.length; i++) {
+                    prev = i;
+                    for (let j = 1; j <= b.length; j++) {
+                        val = a[i - 1] === b[j - 1] ? tmp[j - 1] : Math.min(tmp[j - 1] + 1, prev + 1, tmp[j] + 1);
+                        tmp[j - 1] = prev;
+                        prev = val;
+                    }
+                    tmp[b.length] = prev;
+                }
+                return tmp[b.length];
             }
-            tmp[b.length] = prev;
-        }
-        return tmp[b.length];
-    }
 
-    function correctMessage(msg, dictionary) {
-        let minDistance = Infinity;
-        let closestWord = msg;
-        for (let word of dictionary) {
-            const distance = levenshtein(msg, word);
-            if (distance < minDistance && distance <= 2) { // Tolère 2 erreurs max
-                minDistance = distance;
-                closestWord = word;
+            function correctMessage(msg, dictionary) {
+                let minDistance = Infinity;
+                let closestWord = msg;
+                for (let word of dictionary) {
+                    const distance = levenshtein(msg, word);
+                    if (distance < minDistance && distance <= 2) {
+                        minDistance = distance;
+                        closestWord = word;
+                    }
+                }
+                return closestWord;
             }
+
+            let lowerMsg = userMessage.toLowerCase().trim();
+
+            // Vérification des insultes
+            if (badWords.some(badWord => lowerMsg.includes(badWord))) {
+                addMessage("Travaille ton réseau de campus au lieu de venir m'insulté", 'bot');
+                return;
+            }
+
+            // Correction des fautes de frappe et correspondance
+            for (let entry of responses) {
+                let correctedMsg = correctMessage(lowerMsg, entry.patterns);
+                if (entry.patterns.includes(correctedMsg)) {
+                    const reply = entry.replies[Math.floor(Math.random() * entry.replies.length)];
+                    addMessage(reply, 'bot');
+                    return;
+                }
+            }
+
+            addMessage("Désolé, je suis un chatbot en folie! Répète ça autrement? 🤪", 'bot');
         }
-        return closestWord;
-    }
 
-    let lowerMsg = userMessage.toLowerCase().trim();
-
-    // Vérification des insultes
-    if (badWords.some(badWord => lowerMsg.includes(badWord))) {
-        addMessage("Travaille ton réseau de campus au lieu de venir m'insulté", 'bot');
-        return;
-    }
-
-    // Correction des fautes de frappe et correspondance
-    for (let entry of responses) {
-        let correctedMsg = correctMessage(lowerMsg, entry.patterns);
-        if (entry.patterns.includes(correctedMsg)) {
-            const reply = entry.replies[Math.floor(Math.random() * entry.replies.length)];
-            addMessage(reply, 'bot');
-            return;
-        }
-    }
-
-    addMessage("Désolé, je suis un chatbot en folie! Répète ça autrement? 🤪", 'bot');
-}
+        // =================== JEU SNAKE ===================
         let snakeGame = {
-    canvas: null,
-    ctx: null,
-    snake: null,
-    food: null,
-    direction: 'right',
-    nextDirection: 'right',
-    gridSize: 20,
-    gameLoop: null,
-    score: 0
-};
+            canvas: null,
+            ctx: null,
+            snake: null,
+            food: null,
+            direction: 'right',
+            nextDirection: 'right',
+            gridSize: 20,
+            gameLoop: null,
+            score: 0
+        };
 
-function startSnakeGame() {
-    // Création des éléments du jeu
-    snakeGame.canvas = document.createElement('canvas');
-    snakeGame.canvas.id = 'gameCanvas';
-    snakeGame.canvas.width = 600;
-    snakeGame.canvas.height = 400;
-    document.body.appendChild(snakeGame.canvas);
-    
-    const overlay = document.createElement('div');
-    overlay.className = 'game-overlay';
-    document.body.appendChild(overlay);
-    
-    const scoreDisplay = document.createElement('div');
-    scoreDisplay.className = 'score-display';
-    document.body.appendChild(scoreDisplay);
+        function startSnakeGame() {
+            // Création des éléments du jeu
+            snakeGame.canvas = document.createElement('canvas');
+            snakeGame.canvas.id = 'gameCanvas';
+            snakeGame.canvas.width = 600;
+            snakeGame.canvas.height = 400;
+            document.body.appendChild(snakeGame.canvas);
+            
+            const overlay = document.createElement('div');
+            overlay.className = 'game-overlay';
+            document.body.appendChild(overlay);
+            
+            const scoreDisplay = document.createElement('div');
+            scoreDisplay.className = 'score-display';
+            document.body.appendChild(scoreDisplay);
 
-    // Initialisation
-    snakeGame.ctx = snakeGame.canvas.getContext('2d');
-    snakeGame.snake = [{x: 5, y: 5}];
-    snakeGame.score = 0;
-    snakeGame.direction = 'right';
-    snakeGame.nextDirection = 'right';
-    
-    // Position initiale de la nourriture
-    placeFood();
-    
-    // Affichage des éléments
-    snakeGame.canvas.style.display = 'block';
-    overlay.style.display = 'block';
-    scoreDisplay.style.display = 'block';
-    scoreDisplay.textContent = `Score: ${snakeGame.score}`;
+            // Initialisation
+            snakeGame.ctx = snakeGame.canvas.getContext('2d');
+            snakeGame.snake = [{x: 5, y: 5}];
+            snakeGame.score = 0;
+            snakeGame.direction = 'right';
+            snakeGame.nextDirection = 'right';
+            
+            // Position initiale de la nourriture
+            placeFood();
+            
+            // Affichage des éléments
+            snakeGame.canvas.style.display = 'block';
+            overlay.style.display = 'block';
+            scoreDisplay.style.display = 'block';
+            scoreDisplay.textContent = `Score: ${snakeGame.score}`;
 
-    // Gestion des contrôles
-    document.addEventListener('keydown', handleKeyPress);
+            // Gestion des contrôles
+            document.addEventListener('keydown', handleKeyPress);
 
-    // Démarrage du jeu
-    snakeGame.gameLoop = setInterval(gameStep, 100);
-}
-
-function handleKeyPress(e) {
-    switch(e.key) {
-        case 'ArrowUp':
-            if (snakeGame.direction !== 'down') snakeGame.nextDirection = 'up';
-            break;
-        case 'ArrowDown':
-            if (snakeGame.direction !== 'up') snakeGame.nextDirection = 'down';
-            break;
-        case 'ArrowLeft':
-            if (snakeGame.direction !== 'right') snakeGame.nextDirection = 'left';
-            break;
-        case 'ArrowRight':
-            if (snakeGame.direction !== 'left') snakeGame.nextDirection = 'right';
-            break;
-    }
-}
-
-function gameStep() {
-    snakeGame.direction = snakeGame.nextDirection;
-    const head = {...snakeGame.snake[0]};
-
-    // Déplacement de la tête
-    switch(snakeGame.direction) {
-        case 'up': head.y--; break;
-        case 'down': head.y++; break;
-        case 'left': head.x--; break;
-        case 'right': head.x++; break;
-    }
-
-    // Vérification des collisions
-    if (isCollision(head)) {
-        endGame();
-        return;
-    }
-
-    snakeGame.snake.unshift(head);
-
-    // Vérification de la nourriture
-    if (head.x === snakeGame.food.x && head.y === snakeGame.food.y) {
-        snakeGame.score += 10;
-        document.querySelector('.score-display').textContent = `Score: ${snakeGame.score}`;
-        placeFood();
-    } else {
-        snakeGame.snake.pop();
-    }
-
-    drawGame();
-}
-
-function isCollision(pos) {
-    // Collision avec les murs
-    if (pos.x < 0 || pos.x >= snakeGame.canvas.width / snakeGame.gridSize ||
-        pos.y < 0 || pos.y >= snakeGame.canvas.height / snakeGame.gridSize) {
-        return true;
-    }
-
-    // Collision avec soi-même
-    return snakeGame.snake.some((segment, index) => 
-        index !== 0 && segment.x === pos.x && segment.y === pos.y
-    );
-}
-
-function drawGame() {
-    // Effacer le canvas
-    snakeGame.ctx.fillStyle = 'rgba(0,0,0,0.8)';
-    snakeGame.ctx.fillRect(0, 0, snakeGame.canvas.width, snakeGame.canvas.height);
-
-    // Dessiner le serpent
-    snakeGame.ctx.fillStyle = '#00ff00';
-    snakeGame.snake.forEach(segment => {
-        snakeGame.ctx.fillRect(
-            segment.x * snakeGame.gridSize,
-            segment.y * snakeGame.gridSize,
-            snakeGame.gridSize - 2,
-            snakeGame.gridSize - 2
-        );
-    });
-
-    // Dessiner la nourriture
-    snakeGame.ctx.fillStyle = '#ff0000';
-    snakeGame.ctx.fillRect(
-        snakeGame.food.x * snakeGame.gridSize,
-        snakeGame.food.y * snakeGame.gridSize,
-        snakeGame.gridSize - 2,
-        snakeGame.gridSize - 2
-    );
-}
-
-function placeFood() {
-    snakeGame.food = {
-        x: Math.floor(Math.random() * (snakeGame.canvas.width / snakeGame.gridSize)),
-        y: Math.floor(Math.random() * (snakeGame.canvas.height / snakeGame.gridSize))
-    };
-    // Vérifier que la nourriture n'est pas sur le serpent
-    if (snakeGame.snake.some(segment => 
-        segment.x === snakeGame.food.x && segment.y === snakeGame.food.y)) {
-        placeFood();
-    }
-}
-
-function endGame() {
-    clearInterval(snakeGame.gameLoop);
-    document.removeEventListener('keydown', handleKeyPress);
-    
-    // Supprimer les éléments du jeu
-    document.querySelectorAll('#gameCanvas, .game-overlay, .score-display').forEach(el => el.remove());
-    
-    // Redirection après un court délai
-    setTimeout(() => {
-        window.location.href = 'perdu.html';
-    }, 1000);
-}
-let cloneGame = {
-    active: false,
-    score: 0,
-    timeLeft: 15,
-    clones: []
-};
-
-function createClone() { // DÉPLACÉ EN DEHORS DE startCloneGame
-    const clone = document.createElement('button');
-    clone.className = 'game-clone';
-    clone.textContent = '🐑 CLONE!';
-    clone.style.background = `hsl(${Math.random() * 360}, 70%, 50%)`;
-    clone.style.left = Math.random() * 85 + '%';
-    clone.style.top = Math.random() * 85 + '%';
-    
-    clone.onclick = () => {
-        cloneGame.score++;
-        document.getElementById('cloneScore').textContent = cloneGame.score;
-        clone.remove();
-        clone.style.transform = 'scale(2)';
-        setTimeout(() => clone.remove(), 300);
-    };
-
-    document.querySelector('.clone-game-overlay').appendChild(clone);
-    return clone;
-}
-
-function endCloneGame() { // DÉPLACÉ EN DEHORS DE startCloneGame
-    cloneGame.active = false;
-    const overlay = document.querySelector('.clone-game-overlay');
-    
-    overlay.innerHTML = `
-        <div class="clone-game-instructions">
-            <h2>⏰ TEMPS ÉCOULÉ! ⏰</h2>
-            <p style="font-size: 1.5em">Score final: ${cloneGame.score}</p>
-            <p>${getTauntMessage()}</p>
-            <button onclick="startCloneGame()" style="font-size: 1.2em; margin: 15px; padding: 10px 20px;">
-                Rejouer?
-            </button>
-            <button onclick="document.querySelector('.clone-game-overlay').remove()" style="font-size: 1.2em; padding: 10px 20px;">
-                Quitter
-            </button>
-        </div>
-    `;
-}
-
-function getTauntMessage() { // DÉPLACÉ EN DEHORS DE startCloneGame
-    const score = cloneGame.score;
-    if(score === 0) return '😭 T\'as rien touché!';
-    if(score < 5) return '👎 C\'est tout?';
-    if(score < 15) return '💩 Peut mieux faire!';
-    if(score < 30) return '👍 Pas mal!';
-    if(score < 50) return '🎯 Bon réflexes!';
-    return '👑 MAÎTRE DES CLONES!';
-}
-
-function startCloneGame() {
-    if(cloneGame.active) return;
-    
-    const play = confirm("🎮 CLONE ATTACK 🎮\n\nCLIQUEZ SUR UN MAX DE CLONES EN 15 SECONDES!\nChaque clone rapporte 1 point\nIls disparaissent après 3 secondes!\nPrêt à jouer?");
-    if(!play) return;
-
-    cloneGame.active = true;
-    cloneGame.score = 0;
-    cloneGame.timeLeft = 15;
-    
-    const overlay = document.createElement('div');
-    overlay.className = 'clone-game-overlay';
-    overlay.innerHTML = `
-        <div class="clone-game-ui">
-            <h2>Temps: <span id="cloneTimer">15</span>s</h2>
-            <h2>Score: <span id="cloneScore">0</span></h2>
-        </div>
-    `;
-    document.body.appendChild(overlay);
-    overlay.style.display = 'block';
-
-    const timerInterval = setInterval(() => {
-        cloneGame.timeLeft--;
-        document.getElementById('cloneTimer').textContent = cloneGame.timeLeft;
-        
-        if(cloneGame.timeLeft <= 0) {
-            endCloneGame();
-            clearInterval(timerInterval);
+            // Démarrage du jeu
+            snakeGame.gameLoop = setInterval(gameStep, 100);
         }
-    }, 1000);
 
-    const cloneInterval = setInterval(() => {
-        if(!cloneGame.active) clearInterval(cloneInterval);
-        
-        const clone = createClone();
-        cloneGame.clones.push(clone);
-        
-        setTimeout(() => {
-            if(clone.parentNode) {
-                clone.remove();
-                cloneGame.clones = cloneGame.clones.filter(c => c !== clone);
+        function handleKeyPress(e) {
+            switch(e.key) {
+                case 'ArrowUp':
+                    if (snakeGame.direction !== 'down') snakeGame.nextDirection = 'up';
+                    break;
+                case 'ArrowDown':
+                    if (snakeGame.direction !== 'up') snakeGame.nextDirection = 'down';
+                    break;
+                case 'ArrowLeft':
+                    if (snakeGame.direction !== 'right') snakeGame.nextDirection = 'left';
+                    break;
+                case 'ArrowRight':
+                    if (snakeGame.direction !== 'left') snakeGame.nextDirection = 'right';
+                    break;
             }
-        }, 3000);
-    }, 200);
-} // FERMETURE CORRECTE DE startCloneGame ICI
+        }
+
+        function gameStep() {
+            snakeGame.direction = snakeGame.nextDirection;
+            const head = {...snakeGame.snake[0]};
+
+            // Déplacement de la tête
+            switch(snakeGame.direction) {
+                case 'up': head.y--; break;
+                case 'down': head.y++; break;
+                case 'left': head.x--; break;
+                case 'right': head.x++; break;
+            }
+
+            // Vérification des collisions
+            if (isCollision(head)) {
+                endGame();
+                return;
+            }
+
+            snakeGame.snake.unshift(head);
+
+            // Vérification de la nourriture
+            if (head.x === snakeGame.food.x && head.y === snakeGame.food.y) {
+                snakeGame.score += 10;
+                document.querySelector('.score-display').textContent = `Score: ${snakeGame.score}`;
+                placeFood();
+            } else {
+                snakeGame.snake.pop();
+            }
+
+            drawGame();
+        }
+
+        function isCollision(pos) {
+            // Collision avec les murs
+            if (pos.x < 0 || pos.x >= snakeGame.canvas.width / snakeGame.gridSize ||
+                pos.y < 0 || pos.y >= snakeGame.canvas.height / snakeGame.gridSize) {
+                return true;
+            }
+
+            // Collision avec soi-même
+            return snakeGame.snake.some((segment, index) => 
+                index !== 0 && segment.x === pos.x && segment.y === pos.y
+            );
+        }
+
+        function drawGame() {
+            // Effacer le canvas
+            snakeGame.ctx.fillStyle = 'rgba(0,0,0,0.8)';
+            snakeGame.ctx.fillRect(0, 0, snakeGame.canvas.width, snakeGame.canvas.height);
+
+            // Dessiner le serpent
+            snakeGame.ctx.fillStyle = '#00ff00';
+            snakeGame.snake.forEach(segment => {
+                snakeGame.ctx.fillRect(
+                    segment.x * snakeGame.gridSize,
+                    segment.y * snakeGame.gridSize,
+                    snakeGame.gridSize - 2,
+                    snakeGame.gridSize - 2
+                );
+            });
+
+            // Dessiner la nourriture
+            snakeGame.ctx.fillStyle = '#ff0000';
+            snakeGame.ctx.fillRect(
+                snakeGame.food.x * snakeGame.gridSize,
+                snakeGame.food.y * snakeGame.gridSize,
+                snakeGame.gridSize - 2,
+                snakeGame.gridSize - 2
+            );
+        }
+
+        function placeFood() {
+            snakeGame.food = {
+                x: Math.floor(Math.random() * (snakeGame.canvas.width / snakeGame.gridSize)),
+                y: Math.floor(Math.random() * (snakeGame.canvas.height / snakeGame.gridSize))
+            };
+            // Vérifier que la nourriture n'est pas sur le serpent
+            if (snakeGame.snake.some(segment => 
+                segment.x === snakeGame.food.x && segment.y === snakeGame.food.y)) {
+                placeFood();
+            }
+        }
+
+        function endGame() {
+            clearInterval(snakeGame.gameLoop);
+            document.removeEventListener('keydown', handleKeyPress);
+            
+            // Supprimer les éléments du jeu
+            document.querySelectorAll('#gameCanvas, .game-overlay, .score-display').forEach(el => el.remove());
+            
+            // Redirection après un court délai
+            setTimeout(() => {
+                window.location.href = 'perdu.html';
+            }, 1000);
+        }
+
+        // =================== JEU "ATTAQUE DES CLONES" ===================
+        let cloneGame = {
+            active: false,
+            score: 0,
+            timeLeft: 15,
+            clones: []
+        };
+
+        function createClone() {
+            const clone = document.createElement('button');
+            clone.className = 'game-clone';
+            clone.textContent = '🐑 CLONE!';
+            clone.style.background = `hsl(${Math.random() * 360}, 70%, 50%)`;
+            clone.style.left = Math.random() * 85 + '%';
+            clone.style.top = Math.random() * 85 + '%';
+            
+            clone.onclick = () => {
+                cloneGame.score++;
+                document.getElementById('cloneScore').textContent = cloneGame.score;
+                clone.remove();
+                clone.style.transform = 'scale(2)';
+                setTimeout(() => clone.remove(), 300);
+            };
+
+            document.querySelector('.clone-game-overlay').appendChild(clone);
+            return clone;
+        }
+
+        function endCloneGame() {
+            cloneGame.active = false;
+            const overlay = document.querySelector('.clone-game-overlay');
+            
+            overlay.innerHTML = `
+                <div class="clone-game-instructions">
+                    <h2>⏰ TEMPS ÉCOULÉ! ⏰</h2>
+                    <p style="font-size: 1.5em">Score final: ${cloneGame.score}</p>
+                    <p>${getTauntMessage()}</p>
+                    <button onclick="startCloneGame()" style="font-size: 1.2em; margin: 15px; padding: 10px 20px;">
+                        Rejouer?
+                    </button>
+                    <button onclick="document.querySelector('.clone-game-overlay').remove()" style="font-size: 1.2em; padding: 10px 20px;">
+                        Quitter
+                    </button>
+                </div>
+            `;
+        }
+
+        function getTauntMessage() {
+            const score = cloneGame.score;
+            if(score === 0) return '😭 T\'as rien touché!';
+            if(score < 5) return '👎 C\'est tout?';
+            if(score < 15) return '💩 Peut mieux faire!';
+            if(score < 30) return '👍 Pas mal!';
+            if(score < 50) return '🎯 Bon réflexes!';
+            return '👑 MAÎTRE DES CLONES!';
+        }
+
+        function startCloneGame() {
+            if(cloneGame.active) return;
+            
+            const play = confirm("🎮 CLONE ATTACK 🎮\n\nCLIQUEZ SUR UN MAX DE CLONES EN 15 SECONDES!\nChaque clone rapporte 1 point\nIls disparaissent après 3 secondes!\nPrêt à jouer?");
+            if(!play) return;
+
+            cloneGame.active = true;
+            cloneGame.score = 0;
+            cloneGame.timeLeft = 15;
+            
+            const overlay = document.createElement('div');
+            overlay.className = 'clone-game-overlay';
+            overlay.innerHTML = `
+                <div class="clone-game-ui">
+                    <h2>Temps: <span id="cloneTimer">15</span>s</h2>
+                    <h2>Score: <span id="cloneScore">0</span></h2>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+            overlay.style.display = 'block';
+
+            const timerInterval = setInterval(() => {
+                cloneGame.timeLeft--;
+                document.getElementById('cloneTimer').textContent = cloneGame.timeLeft;
+                
+                if(cloneGame.timeLeft <= 0) {
+                    endCloneGame();
+                    clearInterval(timerInterval);
+                }
+            }, 1000);
+
+            const cloneInterval = setInterval(() => {
+                if(!cloneGame.active) clearInterval(cloneInterval);
+                
+                const clone = createClone();
+                cloneGame.clones.push(clone);
+                
+                setTimeout(() => {
+                    if(clone.parentNode) {
+                        clone.remove();
+                        cloneGame.clones = cloneGame.clones.filter(c => c !== clone);
+                    }
+                }, 3000);
+            }, 200);
+        }
     </script>
 </body>
 </html>
