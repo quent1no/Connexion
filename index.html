@@ -223,32 +223,6 @@
             color: #333;
             box-shadow: 0 0 20px rgba(0,0,0,0.3);
         }
-        #ratOverlay {
-            /* Caché par défaut */
-            display: none;
-            /* Recouvre tout l'écran */
-            position: fixed;
-            top: 0; 
-            left: 0; 
-            width: 100%;
-            height: 100%;
-            /* Fond semi-transparent */
-            background: rgba(0, 0, 0, 0.8);
-            /* Au-dessus de tout le reste */
-            z-index: 9999;
-            /* Pour centrer le contenu en Flexbox */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        #ratVideo {
-            /* Limite l’échelle de la vidéo */
-            max-width: 80%;
-            max-height: 80%;
-            /* Fond noir (optionnel) */
-            background: #000;
-        }
 
     </style>
 </head>
@@ -296,7 +270,7 @@
     <audio id="sonDisco">
         <source src="disco.mp3" type="audio/mpeg">
     </audio>
-    
+
     <script>
         // =================== FONCTIONS DES BOUTONS PRINCIPAUX ===================
 
@@ -382,13 +356,9 @@
 
         // =================== BOUTON "RAT" QUI LANCE LA VIDÉO ===================
         function joueRat() {
-            const overlay = document.getElementById('ratOverlay');
             const ratVideo = document.getElementById('ratVideo');
-        
-            // Affiche l'overlay
-            overlay.style.display = 'flex';
-            // Lance la vidéo
-            ratVideo.play();
+            ratVideo.style.display = 'block';  // On l'affiche
+            ratVideo.play();                   // Et on lance la lecture
         }
 
         // =================== CHATBOT ===================
@@ -751,11 +721,5 @@
             }, 200);
         }
     </script>
-    <div id="ratOverlay">
-        <video id="ratVideo" controls>
-            <source src="https://www.cjoint.com/doc/25_01/OAFmyEhIoFH_youtube-8fnpxU-sQ9Y-1280x720-h264.mp4" type="video/mp4">
-            Votre navigateur ne supporte pas la balise vidéo.
-        </video>
-    </div>
 </body>
 </html>
