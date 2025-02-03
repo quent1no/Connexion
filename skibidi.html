@@ -1,9 +1,82 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Le Sanctuaire Skibidi</title>
+    <style>
+        body {
+            background: #000000;
+            font-family: 'Comic Sans MS', cursive;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            color: #FF69B4;
+        }
+        
+        h1 {
+            font-size: 3em;
+            text-shadow: 0 0 10px #FF69B4;
+            animation: glow 2s infinite;
+        }
+
+        .btn-container {
+            margin-top: 50px;
+        }
+
+        button {
+            padding: 30px;
+            font-size: 2em;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #FF69B4;
+            color: white;
+            margin: 20px;
+            border: 3px solid #FFFFFF;
+        }
+
+        button:hover {
+            transform: scale(1.1) rotate(5deg);
+            background: #FF1493;
+        }
+
+        @keyframes glow {
+            0% { text-shadow: 0 0 10px #FF69B4; }
+            50% { text-shadow: 0 0 30px #FF69B4; }
+            100% { text-shadow: 0 0 10px #FF69B4; }
+        }
+
+        #backButton {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            font-size: 1.2em;
+            padding: 15px 30px;
+        }
+    </style>
+</head>
 <body>
+    <h1>VOUS ETES SUR LE SITE SACRE DU SKIBIDI</h1>
+    
+    <div class="btn-container">
+        <button onclick="jouerSkibidi()">🔥 SKIBIDI TIME! 🔥</button>
+    </div>
 
-<h1>My First Heading</h1>
-<p>My first paragraph.</p>
+    <button id="backButton" onclick="window.location.href='index.html'">Retour à l'Accueil</button>
 
+    <script>
+        function jouerSkibidi() {
+            const num = Math.floor(Math.random() * 5) + 1;
+            const audio = new Audio(`skibidi${num}.mp3`);
+            audio.play();
+            
+            // Effet visuel
+            document.body.style.background = `hsl(${Math.random() * 360}, 70%, 20%)`;
+            setTimeout(() => {
+                document.body.style.background = "#000000";
+            }, 500);
+        }
+    </script>
 </body>
 </html>
