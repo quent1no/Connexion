@@ -54,6 +54,23 @@
             font-size: 1.2em;
             padding: 15px 30px;
         }
+
+        /* Style pour l'image meme */
+        .meme-image {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 80%;
+            max-height: 80%;
+            z-index: 1000;
+            animation: memeAppear 0.5s;
+        }
+
+        @keyframes memeAppear {
+            from { transform: translate(-50%, -50%) scale(0); }
+            to { transform: translate(-50%, -50%) scale(1); }
+        }
     </style>
 </head>
 <body>
@@ -68,13 +85,11 @@
     <script>
         function jouerSkibidi() {
             const num = Math.floor(Math.random() * 7) + 1;
-            const semitones = Math.floor(Math.random() * 21) - 10; // Génère entre -5 et 5
-            const playbackRate = Math.pow(2, semitones / 12); // Conversion en ratio de vitesse
-    
-            // Création du contexte audio
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const semitones = Math.floor(Math.random() * 21) - 10;
+            const playbackRate = Math.pow(2, semitones / 12);
             
-            // Chargement et lecture du fichier audio
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
             fetch(`skibidi${num}.mp3`)
                 .then(response => response.arrayBuffer())
                 .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
@@ -83,15 +98,43 @@
                     source.buffer = audioBuffer;
                     source.playbackRate.value = playbackRate;
                     source.connect(audioContext.destination);
+                    
+                    source.onended = () => {
+                        jouerVine(audioContext);
+                    };
+                    
                     source.start(0);
                 })
                 .catch(error => console.error('Erreur de chargement audio:', error));
-    
-            // Effet visuel existant
+
             document.body.style.background = `hsl(${Math.random() * 360}, 70%, 20%)`;
             setTimeout(() => {
                 document.body.style.background = "#000000";
             }, 500);
+        }
+
+        function jouerVine(audioContext) {
+            fetch('vine.mp3')
+                .then(response => response.arrayBuffer())
+                .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
+                .then(audioBuffer => {
+                    const memeNumber = Math.floor(Math.random() * 5) + 1;
+                    const memeImg = document.createElement('img');
+                    memeImg.src = `meme${memeNumber}.png`;
+                    memeImg.className = 'meme-image';
+                    document.body.appendChild(memeImg);
+
+                    const vineSource = audioContext.createBufferSource();
+                    vineSource.buffer = audioBuffer;
+                    vineSource.connect(audioContext.destination);
+                    
+                    vineSource.onended = () => {
+                        memeImg.remove();
+                    };
+                    
+                    vineSource.start(0);
+                })
+                .catch(error => console.error('Erreur de chargement audio:', error));
         }
     </script>
 </body>
