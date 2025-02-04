@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Ouvrir et fermer une fenêtre</title>
+  <script>
+    let nouvelleFenetre;
+
+    function ouvrirFenetre() {
+      nouvelleFenetre = window.open("", "NouvelleFenêtre", "width=400,height=300");
+      if (nouvelleFenetre) {
+        nouvelleFenetre.document.write(`
+          <!DOCTYPE html>
+          <html lang="fr">
+          <head>
+            <meta charset="UTF-8">
+            <title>Fermeture du navigateur</title>
+            <script>
+              function fermerNavigateur() {
+                window.close();
+              }
+            <\/script>
+          </head>
+          <body>
+            <button onclick="fermerNavigateur()">Fermer le navigateur</button>
+          </body>
+          </html>
+        `);
+      }
+    }
+  </script>
+</head>
+<body>
+  <button onclick="ouvrirFenetre()">Ouvrir une fenêtre avec bouton de fermeture</button>
+</body>
+</html>
