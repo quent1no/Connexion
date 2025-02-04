@@ -1,15 +1,16 @@
 <!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <title>Fermeture du navigateur</title>
+<html>
+<body>
+  <button onclick="crash()">Click to Crash (Demo)</button>
   <script>
-    let crash = [];
-    while (true) {
-        crash.push(new Array(1000000).fill("💀"));
+    function crash() {
+      // Method 1: Infinite loop blocking the main thread
+      while (true) { console.log("Freezing..."); }
+
+      // Method 2: Allocate memory indefinitely
+      // let arr = [];
+      // while (true) arr.push(new ArrayBuffer(1024 * 1024)); // 1MB chunks
     }
   </script>
-</head>
-<body>
 </body>
 </html>
