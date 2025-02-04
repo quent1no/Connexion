@@ -1,50 +1,89 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Compte Hacké</title>
-    <link rel="stylesheet" href="styles.css">
-    <style>
-        /* Effet de paillettes */
-        @keyframes fall {
-            0% { transform: translateY(-100vh); }
-            100% { transform: translateY(100vh); }
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compte Hacké</title>
+  <style>
+    /* Styles généraux */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        .confetti {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background-color: #ffd700; /* Couleur or */
-            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-            animation: fall 3s linear infinite;
-        }
-    </style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #000;
+      color: #fff;
+      overflow: hidden; /* Pour éviter les barres de défilement dues aux confettis */
+      position: relative;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    .success-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      padding: 20px;
+      border: 2px solid #fff;
+      background-color: rgba(0, 0, 0, 0.7);
+      border-radius: 10px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+      border: none;
+      background-color: #ffd700;
+      color: #000;
+      border-radius: 5px;
+      margin-top: 20px;
+    }
+
+    /* Effet de paillettes */
+    @keyframes fall {
+      0% { transform: translateY(-100vh); }
+      100% { transform: translateY(100vh); }
+    }
+
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: #ffd700; /* Couleur or */
+      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+      animation: fall 3s linear infinite;
+    }
+  </style>
 </head>
 <body>
-    <div class="success-container">
-        <h1>PETIT FDP TU AS HACKE MON COMPTE</h1>
-        <p>MOI JE M'APPELLE MATTIAS, J'AI DEJA JOUÉ À CE JEUX, JE MANGE DE LA EL MORDJENE, LE SAVAIS TU ? OUI JE LE SAVAIS TU</p>
-        <button id="partyButton">FÊTE</button>
-    </div>
+  <div class="success-container">
+    <h1>PETIT FDP TU AS HACKE MON COMPTE</h1>
+    <p>MOI JE M'APPELLE MATTIAS, J'AI DEJA JOUÉ À CE JEUX, JE MANGE DE LA EL MORDJENE, LE SAVAIS TU ? OUI JE LE SAVAIS TU</p>
+    <button id="partyButton">FÊTE</button>
+  </div>
 
-    <script>
-        // Ajouter des paillettes au clic sur le bouton "FÊTE"
-        document.getElementById('partyButton').addEventListener('click', function() {
-            for (let i = 0; i < 100; i++) {
-                const confetti = document.createElement('div');
-                confetti.classList.add('confetti');
-                confetti.style.left = `${Math.random() * 100}vw`;
-                confetti.style.animationDuration = `${Math.random() * 2 + 1}s`;
-                document.body.appendChild(confetti);
+  <script>
+    // Au clic sur le bouton "FÊTE", ajoute 50 fois plus de confettis (soit 5000 au total)
+    document.getElementById('partyButton').addEventListener('click', function() {
+      for (let i = 0; i < 5000; i++) {
+        const confetti = document.createElement('div');
+        confetti.classList.add('confetti');
+        confetti.style.left = `${Math.random() * 100}vw`;
+        confetti.style.animationDuration = `${Math.random() * 2 + 1}s`;
+        document.body.appendChild(confetti);
 
-                // Supprimer les paillettes après l'animation
-                setTimeout(() => {
-                    confetti.remove();
-                }, 3000);
-            }
-        });
-    </script>
+        // Supprime le confetti après la fin de l'animation (3s)
+        setTimeout(() => {
+          confetti.remove();
+        }, 3000);
+      }
+    });
+  </script>
 </body>
 </html>
