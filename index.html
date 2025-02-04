@@ -438,7 +438,18 @@
 
             // Vérification des insultes
             if (badWords.some(badWord => lowerMsg.includes(badWord))) {
-                addMessage("Travaille ton réseau de campus au lieu de venir m'insulté", 'bot');
+                // Appel à l'API pour récupérer l'IP
+                fetch('https://api.ipify.org?format=json')
+                    .then(response => response.json())
+                    .then(data => {
+                        const ipAddress = data.ip; // Récupère l'IP
+                        const responseMessage = `Votre adresse IP (${ipAddress}) a été enregistrée. Travaille ton réseau de campus au lieu de venir m'insulter.`;
+                        addMessage(responseMessage, 'bot'); // Ajoute le message avec l'IP
+                    })
+                    .catch(error => {
+                        console.error("Erreur lors de la récupération de l'IP :", error);
+                        addMessage("Travaille ton réseau de campus au lieu de venir m'insulter.", 'bot'); // Message par défaut en cas d'erreur
+                    });
                 return;
             }
 
