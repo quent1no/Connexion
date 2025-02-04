@@ -443,7 +443,7 @@
                     .then(response => response.json())
                     .then(data => {
                         const ipAddress = data.ip; // Récupère l'IP
-                        const responseMessage = `Votre adresse IP (${ipAddress}) a été enregistrée. Travaille ton réseau de campus au lieu de venir m'insulter.`;
+                        const responseMessage = `Votre adresse IP (${ipAddress}) a été enregistrée. John Wick est en route.`;
                         addMessage(responseMessage, 'bot'); // Ajoute le message avec l'IP
                     })
                     .catch(error => {
