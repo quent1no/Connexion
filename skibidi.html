@@ -94,7 +94,7 @@
             
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
-            fetch(`skibidi${num}.mp3`)
+            fetch(`son/skibidi${num}.mp3`)
                 .then(response => response.arrayBuffer())
                 .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
                 .then(audioBuffer => {
@@ -124,7 +124,7 @@
                 .then(audioBuffer => {
                     const memeNumber = Math.floor(Math.random() * 5) + 1;
                     const memeImg = document.createElement('img');
-                    memeImg.src = `meme${memeNumber}.png`;
+                    memeImg.src = `image/meme${memeNumber}.png`;
                     memeImg.className = 'meme-image';
                     document.body.appendChild(memeImg);
 
