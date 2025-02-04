@@ -68,12 +68,26 @@
     <script>
         function jouerSkibidi() {
             const num = Math.floor(Math.random() * 7) + 1;
-            console.log(`Playing Skibidi number: ${num}`); // Print the Skibidi number
-        
-            const audio = new Audio(`skibidi${num}.mp3`);
-            audio.play();
-        
-            // Effet visuel
+            const semitones = Math.floor(Math.random() * 11) - 5; // Génère entre -5 et 5
+            const playbackRate = Math.pow(2, semitones / 12); // Conversion en ratio de vitesse
+    
+            // Création du contexte audio
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            
+            // Chargement et lecture du fichier audio
+            fetch(`skibidi${num}.mp3`)
+                .then(response => response.arrayBuffer())
+                .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
+                .then(audioBuffer => {
+                    const source = audioContext.createBufferSource();
+                    source.buffer = audioBuffer;
+                    source.playbackRate.value = playbackRate;
+                    source.connect(audioContext.destination);
+                    source.start(0);
+                })
+                .catch(error => console.error('Erreur de chargement audio:', error));
+    
+            // Effet visuel existant
             document.body.style.background = `hsl(${Math.random() * 360}, 70%, 20%)`;
             setTimeout(() => {
                 document.body.style.background = "#000000";
