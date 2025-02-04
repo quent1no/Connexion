@@ -51,13 +51,13 @@
 
     /* Bouton FÊTE : à gauche, fond noir, texte blanc */
     .party-button {
-      background-color: #000;
+      background-color: #ffa31a;
       color: #fff;
     }
 
     /* Bouton QUITTER : fond #ffa31a, texte noir */
     .quit-button {
-      background-color: #ffa31a;
+      background-color: #000;
       color: #000;
     }
 
@@ -83,7 +83,7 @@
     <p>MOI JE M'APPELLE MATTIAS, J'AI DEJA JOUÉ À CE JEUX, JE MANGE DE LA EL MORDJENE, LE SAVAIS TU ? OUI JE LE SAVAIS TU</p>
     <div class="button-container">
       <button id="partyButton" class="party-button">FÊTE</button>
-      <button id="quitButton" class="quit-button">J'ai moins de 18 ans – QUITTER</button>
+      <button id="quitButton" class="quit-button">J'ai moins de 18 ans – SORTIR</button>
     </div>
   </div>
 
@@ -109,7 +109,7 @@
       // Tentative de fermer la fenêtre (cette méthode peut ne pas fonctionner dans certains navigateurs)
       window.close();
       // En cas d'échec, rediriger vers une page vide
-      window.location.href = "about:blank";
+      window.location.href = "index.html";
     });
   </script>
 </body>
