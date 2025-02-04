@@ -34,15 +34,31 @@
       border-radius: 10px;
     }
 
+    .button-container {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
     button {
       padding: 10px 20px;
       font-size: 1rem;
       cursor: pointer;
       border: none;
+      border-radius: 5px;
+    }
+
+    /* Bouton FÊTE : à gauche, fond noir, texte blanc */
+    .party-button {
+      background-color: #000;
+      color: #fff;
+    }
+
+    /* Bouton QUITTER : fond #ffa31a, texte noir */
+    .quit-button {
       background-color: #ffa31a;
       color: #000;
-      border-radius: 5px;
-      margin-top: 20px;
     }
 
     /* Effet de paillettes */
@@ -65,11 +81,14 @@
   <div class="success-container">
     <h1>PETIT FDP TU AS HACKE MON COMPTE</h1>
     <p>MOI JE M'APPELLE MATTIAS, J'AI DEJA JOUÉ À CE JEUX, JE MANGE DE LA EL MORDJENE, LE SAVAIS TU ? OUI JE LE SAVAIS TU</p>
-    <button id="partyButton">FÊTE</button>
+    <div class="button-container">
+      <button id="partyButton" class="party-button">FÊTE</button>
+      <button id="quitButton" class="quit-button">J'ai moins de 18 ans – QUITTER</button>
+    </div>
   </div>
 
   <script>
-    // Au clic sur le bouton "FÊTE", ajoute 50 fois plus de confettis (soit 5000 au total)
+    // Au clic sur le bouton "FÊTE", ajoute 5000 confettis
     document.getElementById('partyButton').addEventListener('click', function() {
       for (let i = 0; i < 5000; i++) {
         const confetti = document.createElement('div');
@@ -83,6 +102,14 @@
           confetti.remove();
         }, 3000);
       }
+    });
+
+    // Au clic sur le bouton "J'ai moins de 18 ans – QUITTER", quitte la page
+    document.getElementById('quitButton').addEventListener('click', function() {
+      // Tentative de fermer la fenêtre (cette méthode peut ne pas fonctionner dans certains navigateurs)
+      window.close();
+      // En cas d'échec, rediriger vers une page vide
+      window.location.href = "about:blank";
     });
   </script>
 </body>
