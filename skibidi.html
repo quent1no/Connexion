@@ -68,9 +68,11 @@
     <script>
         function jouerSkibidi() {
             const num = Math.floor(Math.random() * 7) + 1;
+            console.log(`Playing Skibidi number: ${num}`); // Print the Skibidi number
+        
             const audio = new Audio(`skibidi${num}.mp3`);
             audio.play();
-            
+        
             // Effet visuel
             document.body.style.background = `hsl(${Math.random() * 360}, 70%, 20%)`;
             setTimeout(() => {
