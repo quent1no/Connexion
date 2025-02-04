@@ -118,7 +118,7 @@
         }
 
         function jouerVine(audioContext) {
-            fetch('vine.mp3')
+            fetch('son/vine.mp3')
                 .then(response => response.arrayBuffer())
                 .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
                 .then(audioBuffer => {
