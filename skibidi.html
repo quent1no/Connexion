@@ -37,7 +37,7 @@
         }
 
         button:hover {
-            transform: scale(1.1) rotate(5deg);
+            transform: scale(1.1);
             background: #FF1493;
         }
 
@@ -68,7 +68,7 @@
     <script>
         function jouerSkibidi() {
             const num = Math.floor(Math.random() * 7) + 1;
-            const semitones = Math.floor(Math.random() * 11) - 5; // Génère entre -5 et 5
+            const semitones = Math.floor(Math.random() * 21) - 10; // Génère entre -5 et 5
             const playbackRate = Math.pow(2, semitones / 12); // Conversion en ratio de vitesse
     
             // Création du contexte audio
