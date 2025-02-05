@@ -133,7 +133,9 @@
                     vineSource.connect(audioContext.destination);
                     
                     vineSource.onended = () => {
-                        memeImg.remove();
+                        setTimeout(() => {
+                            memeImg.remove();
+                        }, 1000); // 1000ms = 1 second
                     };
                     
                     vineSource.start(0);
