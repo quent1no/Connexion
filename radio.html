@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radio GitHub</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #1a1a1a;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        .player {
+            background-color: #333;
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="player">
+        <h1>Radio GitHub</h1>
+        <audio id="radioStream" controls loop>
+            <source src="votre-fichier.mp3" type="audio/mpeg">
+            Votre navigateur ne supporte pas l'élément audio.
+        </audio>
+        <br>
+        <button id="playButton">Démarrer la radio</button>
+    </div>
+
+    <script>
+        const audio = document.getElementById('radioStream');
+        const playButton = document.getElementById('playButton');
+        let isPlaying = false;
+
+        // Remplacez cette valeur par la durée réelle de votre fichier audio en secondes
+        const audioDuration = 217; // Exemple : 3 minutes 37 secondes = 217 secondes
+
+        function calculateStartTime() {
+            const now = new Date();
+            const totalSeconds = Math.floor(now.getTime() / 1000);
+            return totalSeconds % audioDuration;
+        }
+
+        playButton.addEventListener('click', () => {
+            if (!isPlaying) {
+                audio.currentTime = calculateStartTime();
+                audio.play();
+                playButton.textContent = 'Arrêter la radio';
+                isPlaying = true;
+            } else {
+                audio.pause();
+                playButton.textContent = 'Démarrer la radio';
+                isPlaying = false;
+            }
+        });
+
+        // Chargement initial silencieux pour contourner les restrictions d'autoplay
+        audio.volume = 0;
+        audio.play().then(() => {
+            audio.pause();
+            audio.currentTime = 0;
+            audio.volume = 1;
+        }).catch(error => {
+            console.log('Autoplay non autorisé, nécessite une interaction utilisateur');
+        });
+    </script>
+</body>
+</html>
