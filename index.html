@@ -245,7 +245,11 @@
         
         <!-- NOUVEAU BOUTON ROULETTE -->
         <button onclick="window.location.href='roulette.html'">🎰 Roulette!</button>
+    
+        <!-- NOUVEAU BOUTON MES HATER -->
+        <button onclick="playHater()">Mes hater</button>
     </div>
+
 
     <div class="chat-container" id="chatContainer">
         <div class="chat-messages" id="chatMessages"></div>
@@ -362,6 +366,40 @@
             ratVideo.style.display = 'block';  // On l'affiche
             ratVideo.play();                   // Et on lance la lecture
         }
+
+        function playHater() {
+            // Définissez ici le nombre maximum de fichiers hater disponibles.
+            // Par exemple, s'il y a hater1 à hater5, on utilisera 5.
+            const maxHaters = 1;
+            const randomIndex = Math.floor(Math.random() * maxHaters) + 1; // Un nombre entre 1 et 5
+        
+            // Création de l'objet audio avec le fichier correspondant.
+            const audio = new Audio(`hater${randomIndex}.mp3`);
+        
+            // Création de l'image correspondante
+            const image = document.createElement('img');
+            image.src = `hater${randomIndex}.png`;
+        
+            // Positionnement et style pour afficher l'image en plein écran ou au centre
+            image.style.position = 'fixed';
+            image.style.top = '50%';
+            image.style.left = '50%';
+            image.style.transform = 'translate(-50%, -50%)';
+            image.style.zIndex = '1000';
+            // Vous pouvez aussi ajouter des styles supplémentaires (taille, bordure, etc.)
+            
+            // Ajout de l'image au document
+            document.body.appendChild(image);
+        
+            // Lecture du son
+            audio.play();
+        
+            // Lorsque le son est terminé, on supprime l'image.
+            audio.addEventListener('ended', () => {
+                image.remove();
+            });
+        }
+
 
         // =================== CHATBOT ===================
         function toggleChat() {
@@ -617,6 +655,7 @@
                 placeFood();
             }
         }
+        
 
         function endGame() {
             clearInterval(snakeGame.gameLoop);
