@@ -374,11 +374,11 @@
             const randomIndex = Math.floor(Math.random() * maxHaters) + 1; // Un nombre entre 1 et 5
         
             // Création de l'objet audio avec le fichier correspondant.
-            const audio = new Audio(`hater${randomIndex}.mp3`);
+            const audio = new Audio(`son/hater${randomIndex}.mp3`);
         
             // Création de l'image correspondante
             const image = document.createElement('img');
-            image.src = `hater${randomIndex}.png`;
+            image.src = `image/hater${randomIndex}.png`;
         
             // Positionnement et style pour afficher l'image en plein écran ou au centre
             image.style.position = 'fixed';
