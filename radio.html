@@ -1,89 +1,215 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Radio GitHub</title>
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #1a1a1a;
-            color: white;
-            font-family: Arial, sans-serif;
-        }
-        .player {
-            background-color: #333;
-            padding: 2rem;
-            border-radius: 10px;
-            text-align: center;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 1rem;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Radio GitHub Pages</title>
+  <style>
+    body {
+      background-color: #1a1a1a;
+      color: #EEE;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    .player, .uploader, .playlist {
+      background-color: #333;
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      margin: 1rem 0;
+      width: 90%;
+      max-width: 500px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 1rem;
+      background-color: #4CAF50;
+      color: white;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    input[type="file"] {
+      margin-top: 1rem;
+    }
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    li {
+      padding: 4px 0;
+    }
+  </style>
 </head>
 <body>
-    <div class="player">
-        <h1>Radio GitHub</h1>
-        <audio id="radioStream" controls loop>
-            <source src="son/disco.mp3" type="audio/mpeg">
-            Votre navigateur ne supporte pas l'élément audio.
-        </audio>
-        <br>
-        <button id="playButton">Démarrer la radio</button>
-    </div>
+  <h1>Radio GitHub Pages</h1>
 
-    <script>
-        const audio = document.getElementById('radioStream');
-        const playButton = document.getElementById('playButton');
-        let isPlaying = false;
+  <!-- Zone du lecteur -->
+  <div class="player">
+    <audio id="audioPlayer" controls></audio>
+    <br>
+    <button id="startStopButton">Démarrer la radio</button>
+  </div>
 
-        // Remplacez cette valeur par la durée réelle de votre fichier audio en secondes
-        const audioDuration = 227; // Exemple : 3 minutes 37 secondes = 217 secondes
+  <!-- Zone de téléversement (fonctionne uniquement pour votre session) -->
+  <div class="uploader">
+    <h2>Téléverser un fichier audio</h2>
+    <input type="file" id="uploadFile" accept="audio/*">
+    <br>
+    <button id="uploadButton">Ajouter à la playlist</button>
+    <p style="font-size: 0.9em;">Le fichier téléversé sera ajouté à votre playlist locale.</p>
+  </div>
 
-        function calculateStartTime() {
-            const now = new Date();
-            const totalSeconds = Math.floor(now.getTime() / 1000);
-            return totalSeconds % audioDuration;
+  <!-- Affichage de la playlist actuelle -->
+  <div class="playlist">
+    <h2>Playlist</h2>
+    <ul id="playlistList"></ul>
+  </div>
+
+  <script>
+    /********** Configuration de la playlist de base **********/
+    // Vous pouvez ajouter ici les morceaux que vous souhaitez rendre accessibles à tous.
+    // Pour chaque morceau, il faut préciser : un titre, l'URL du fichier audio (déposé dans votre repo par exemple)
+    // et sa durée en secondes.
+    let playlist = [
+      { title: "Morceau 1", src: "morceau1.mp3", duration: 217 },
+      { title: "Morceau 2", src: "morceau2.mp3", duration: 300 },
+      // Ajoutez d'autres morceaux ici...
+    ];
+
+    // Calcul de la durée totale de la playlist (cycle complet)
+    let totalDuration = playlist.reduce((sum, song) => sum + song.duration, 0);
+
+    // Mise à jour de l'affichage de la playlist
+    function updatePlaylistDisplay() {
+      const playlistList = document.getElementById("playlistList");
+      playlistList.innerHTML = "";
+      playlist.forEach((song, index) => {
+        const li = document.createElement("li");
+        li.textContent = `${index + 1}. ${song.title}`;
+        playlistList.appendChild(li);
+      });
+    }
+    updatePlaylistDisplay();
+
+    /********** Référence temporelle globale **********/
+    // On choisit une date de référence fixe (par exemple le 1er janvier 2023 à minuit UTC)
+    const referenceDate = new Date("2023-01-01T00:00:00Z");
+
+    // Retourne la position (en secondes) dans le cycle global de la radio
+    function getGlobalPlaybackPosition() {
+      const now = new Date();
+      const elapsed = (now - referenceDate) / 1000; // secondes écoulées depuis la référence
+      if (totalDuration === 0) return 0;
+      return elapsed % totalDuration;
+    }
+
+    // Détermine quel morceau et à quel offset (en secondes) doit être diffusé
+    function getCurrentSong() {
+      let globalPos = getGlobalPlaybackPosition();
+      let accum = 0;
+      for (let i = 0; i < playlist.length; i++) {
+        if (globalPos < accum + playlist[i].duration) {
+          return { index: i, offset: globalPos - accum };
         }
+        accum += playlist[i].duration;
+      }
+      // En cas de problème, on renvoie le dernier morceau
+      return { index: playlist.length - 1, offset: 0 };
+    }
 
-        playButton.addEventListener('click', () => {
-            if (!isPlaying) {
-                audio.currentTime = calculateStartTime();
-                audio.play();
-                playButton.textContent = 'Arrêter la radio';
-                isPlaying = true;
-            } else {
-                audio.pause();
-                playButton.textContent = 'Démarrer la radio';
-                isPlaying = false;
-            }
-        });
+    /********** Gestion du lecteur audio **********/
+    const audioPlayer = document.getElementById("audioPlayer");
+    const startStopButton = document.getElementById("startStopButton");
+    let isPlaying = false;
 
-        // Chargement initial silencieux pour contourner les restrictions d'autoplay
-        audio.volume = 0;
-        audio.play().then(() => {
-            audio.pause();
-            audio.currentTime = 0;
-            audio.volume = 1;
-        }).catch(error => {
-            console.log('Autoplay non autorisé, nécessite une interaction utilisateur');
+    // Démarre (ou relance) la radio en se synchronisant sur la position globale
+    function playGlobalRadio() {
+      let { index, offset } = getCurrentSong();
+      const currentSong = playlist[index];
+      // On change la source du lecteur si nécessaire
+      if (audioPlayer.src.indexOf(currentSong.src) === -1) {
+        audioPlayer.src = currentSong.src;
+      }
+      audioPlayer.currentTime = offset;
+      audioPlayer.play().catch(error => {
+        console.error("Erreur lors de la lecture :", error);
+      });
+    }
+
+    // Bouton de démarrage / pause
+    startStopButton.addEventListener("click", () => {
+      if (!isPlaying) {
+        playGlobalRadio();
+        isPlaying = true;
+        startStopButton.textContent = "Pause la radio";
+      } else {
+        // En pause, on ne conserve pas la position locale : à la reprise, la lecture se resynchronisera
+        audioPlayer.pause();
+        isPlaying = false;
+        startStopButton.textContent = "Démarrer la radio";
+      }
+    });
+
+    // Au besoin, dès la fin d'un morceau, re-synchroniser pour le suivant
+    audioPlayer.addEventListener("ended", () => {
+      playGlobalRadio();
+    });
+
+    // Optionnel : toutes les 5 secondes, on resynchronise légèrement pour compenser les décalages
+    setInterval(() => {
+      if (isPlaying) {
+        let { index, offset } = getCurrentSong();
+        // Si la source ne correspond pas au morceau attendu, on relance
+        if (audioPlayer.src.indexOf(playlist[index].src) === -1) {
+          playGlobalRadio();
+        } else {
+          // Si l'écart entre la position actuelle et l'offset global est > 1 sec, on réajuste
+          if (Math.abs(audioPlayer.currentTime - offset) > 1) {
+            audioPlayer.currentTime = offset;
+          }
+        }
+      }
+    }, 5000);
+
+    /********** Téléversement de musique (local uniquement) **********/
+    const uploadFileInput = document.getElementById("uploadFile");
+    const uploadButton = document.getElementById("uploadButton");
+
+    uploadButton.addEventListener("click", () => {
+      if (uploadFileInput.files.length > 0) {
+        const file = uploadFileInput.files[0];
+        const fileURL = URL.createObjectURL(file);
+
+        // Création d'un élément audio temporaire pour obtenir la durée du fichier
+        const tempAudio = document.createElement("audio");
+        tempAudio.src = fileURL;
+        tempAudio.addEventListener("loadedmetadata", () => {
+          const duration = tempAudio.duration;
+          // Ajout du morceau à la playlist locale (il ne sera visible que pour vous)
+          playlist.push({
+            title: file.name,
+            src: fileURL,
+            duration: duration
+          });
+          // Recalcule la durée totale de la playlist
+          totalDuration = playlist.reduce((sum, song) => sum + song.duration, 0);
+          updatePlaylistDisplay();
+          alert(`"${file.name}" a été ajouté à la playlist.`);
         });
-    </script>
+      } else {
+        alert("Veuillez sélectionner un fichier audio.");
+      }
+    });
+  </script>
 </body>
 </html>
