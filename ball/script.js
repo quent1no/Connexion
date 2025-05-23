@@ -13,7 +13,7 @@ window.addEventListener('click', function unlock() {
 
 function handleBounceAudio(speed) {
   // playbackRate proportional to speed/20 (min 1×) :contentReference[oaicite:3]{index=3}
-  audioEl.playbackRate = Math.max(speed / 20, 1);
+  audioEl.playbackRate = Math.max(speed / 50, 1);
 
   // if already playing, just reset the pause timer 
   if (!audioEl.paused) {
