@@ -1,18 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Single Circle Bounce with Megalovania</title>
+  <title>Ballon & Megalovania Dynamique</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <canvas id="canvas"></canvas>
   <div id="info">Bounces: 0</div>
+  <button id="resetButton">Reset</button>
 
-  <!-- Hidden audio sprite; crossorigin for seeking -->
+  <!-- Audio caché pour sprite Megalovania (CORS activé) -->
   <audio
     id="megalovania"
-    src="https://cdn-1.files.vc/files/inm/51d518cee3e96e96f0724f9a80013075.mp3?md5=9bc851b57d0a9c54de99c4dac85e6ad5&t=1748010177601&o=Dh0YFQAUWUxLGgkGG0sEFw&a=t"
+    src="https://cdn-1.files.vc/files/inm/51d518cee3e96e96f0724f9a80013075.mp3?md5=9bc851b57d0a9c54de99c4dac85e6ad5&t=1748012812749&o=Dh0YFQAUWUxLGgkGG0sEFw&a=t"
     preload="auto"
     crossorigin="anonymous"
   ></audio>
