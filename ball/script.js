@@ -1,99 +1,134 @@
-// — Audio playback management —
-// Unlock audio on first click (autoplay policy) :contentReference[oaicite:7]{index=7}
-const audioEl = document.getElementById('megalovania');
+// ——————————————
+// Audio playback management
+// ——————————————
+const audioEl    = document.getElementById('megalovania');
+const pauseDelay = 200;              // ms per snippet
+let pauseTimeout;
+
+// Unlock audio on first click (autoplay policy)
 window.addEventListener('click', function unlock() {
   audioEl.play().then(() => audioEl.pause()).catch(() => {});
   window.removeEventListener('click', unlock);
 }, { once: true });
 
-let pauseTimeout;
-const pauseDelay = 300; // milliseconds
+function handleBounceAudio(speed) {
+  // playbackRate proportional to speed/20 (min 1×) :contentReference[oaicite:3]{index=3}
+  audioEl.playbackRate = Math.max(speed / 20, 1);
 
-function playOnBounce() {
-  // Only start playback if it's currently paused :contentReference[oaicite:8]{index=8}
-  if (audioEl.paused) {
-    audioEl.play().catch(() => {});      // start playback :contentReference[oaicite:9]{index=9}
+  // if already playing, just reset the pause timer 
+  if (!audioEl.paused) {
+    clearTimeout(pauseTimeout);
+    pauseTimeout = setTimeout(() => audioEl.pause(), pauseDelay);
+    return;
   }
-  // Clear any pending pause, then schedule a new one :contentReference[oaicite:10]{index=10}
-  clearTimeout(pauseTimeout);            // cancel prior timeout :contentReference[oaicite:11]{index=11}
+
+  // otherwise start playback for this bounce
+  audioEl.play().catch(() => {});
   pauseTimeout = setTimeout(() => {
-    audioEl.pause();                     // pause after delay :contentReference[oaicite:12]{index=12}
-  }, pauseDelay);                        // 0.2s after final bounce :contentReference[oaicite:13]{index=13}
+    audioEl.pause();
+  }, pauseDelay);
 }
 
 // — Canvas & physics setup —
 const canvas = document.getElementById('canvas');
 const ctx    = canvas.getContext('2d');
 const info   = document.getElementById('info');
+const resetBtn = document.getElementById('resetButton');
 let W, H, cx, cy;
-window.addEventListener('resize', resize);
+
 function resize() {
-  W = canvas.width = window.innerWidth;
+  W = canvas.width  = window.innerWidth;
   H = canvas.height = window.innerHeight;
   cx = W/2; cy = H/2;
 }
+window.addEventListener('resize', resize);
 resize();
 
-// No gravity
-const gravity = 0;
-
-// Single closed circle
+// No gravity, one closed circle
 const ring = { R: 200 };
+// Speed caps
+const MAX_SPEED = 250;
+const MIN_SPEED = 20;
 
-// Ball class
 class Ball {
   constructor(color) {
-    this.r = 8; this.color = color; this.reset();
+    this.r = 8;
+    this.color = color;
+    this.reset();
   }
+
   reset() {
-    this.x = cx; this.y = cy;
-    const ang = Math.random() * 2 * Math.PI;
-    const speed = 2 + Math.random() * 1.5;
-    this.vx = Math.cos(ang) * speed;
-    this.vy = Math.sin(ang) * speed;
+    this.x = cx;  this.y = cy;
+    const ang   = Math.random() * Math.PI * 2;
+    const speed = 5;
+    this.vx     = Math.cos(ang) * speed;
+    this.vy     = Math.sin(ang) * speed;
     this.bounces = 0;
   }
+
   update() {
-    // Previous distance from center :contentReference[oaicite:14]{index=14}
+    // record previous radius
     const pdx = this.x - cx, pdy = this.y - cy;
     const prevDist = Math.hypot(pdx, pdy);
 
-    // Move
+    // move
     this.x += this.vx;
     this.y += this.vy;
 
-    // New distance & angle
+    // current distance & angle
     const dx = this.x - cx, dy = this.y - cy;
     const dist = Math.hypot(dx, dy);
-    const ang  = Math.atan2(dy, dx);
 
     const boundary = ring.R - this.r;
-    // Detect outward crossing
+    // detect outward crossing 
     if (prevDist < boundary && dist >= boundary) {
-      // Compute normal
+      // compute normal
       const nx = dx / dist, ny = dy / dist;
-      // Snap back to boundary
+      // snap back to surface
       this.x = cx + nx * boundary;
       this.y = cy + ny * boundary;
-      // Reflect velocity: v' = v - 2*(v·n)*n :contentReference[oaicite:15]{index=15}
+
+      // reflect: v' = v - 2(v·n)n
       const dot = this.vx * nx + this.vy * ny;
-      this.vx = (this.vx - 2 * dot * nx) * 1.02;
-      this.vy = (this.vy - 2 * dot * ny) * 1.02;
-      // Add slight random jitter so it doesn’t shuttle on one axis
+
+      // choose boost multiplier by speed zone
+      let speed = Math.hypot(this.vx, this.vy);
+      let m = 1.01;
+      if (speed > 200)      m = 1.001;
+      else if (speed > 150) m = 1.002;
+      else if (speed > 100) m = 1.003;
+      else if (speed > 50)  m = 1.005;
+
+      // apply reflection + boost
+      this.vx = (this.vx - 2 * dot * nx) * m;
+      this.vy = (this.vy - 2 * dot * ny) * m;
+
+      // jitter so it doesn’t ping-pong 
       const jitter = (Math.random() - 0.5) * 0.2;
-      const cos = Math.cos(jitter), sin = Math.sin(jitter);
+      const cosJ = Math.cos(jitter), sinJ = Math.sin(jitter);
       [this.vx, this.vy] = [
-        this.vx * cos - this.vy * sin,
-        this.vx * sin + this.vy * cos
+        this.vx * cosJ - this.vy * sinJ,
+        this.vx * sinJ + this.vy * cosJ
       ];
+
+      // enforce cap at ≥ MAX_SPEED → reset to MIN_SPEED
+      speed = Math.hypot(this.vx, this.vy);
+      if (speed >= MAX_SPEED) {
+        const scale = MIN_SPEED / speed;
+        this.vx *= scale;
+        this.vy *= scale;
+        speed = MIN_SPEED;
+      }
+
       this.bounces++;
-      playOnBounce();       // manage audio playback
+      handleBounceAudio(speed);
       updateInfo();
     }
   }
+
   draw(ctx) {
     ctx.beginPath();
-    ctx.arc(this.x, this.y, this.r, 0, 2 * Math.PI);
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
     ctx.fillStyle = this.color;
     ctx.fill();
   }
@@ -106,17 +141,42 @@ function updateInfo() {
 }
 
 function drawRing() {
-  ctx.strokeStyle = 'red'; ctx.lineWidth = 4;
+  ctx.strokeStyle = 'red';
+  ctx.lineWidth   = 4;
   ctx.beginPath();
-  ctx.arc(cx, cy, ring.R, 0, 2 * Math.PI);
+  ctx.arc(cx, cy, ring.R, 0, Math.PI * 2);
   ctx.stroke();
 }
+
+function drawSpeed() {
+  const speed = Math.hypot(ball.vx, ball.vy);
+  ctx.font        = '18px sans-serif';
+  ctx.fillStyle   = 'white';
+  ctx.textAlign   = 'right';
+  ctx.fillText(
+    `Speed: ${speed.toFixed(2)}`,
+    cx - ring.R - 10,
+    cy
+  );
+}
+
+// Reset button handler: reposition ball & reset audio
+resetBtn.addEventListener('click', () => {
+  ball.reset();
+  updateInfo();
+  // reset audio state
+  clearTimeout(pauseTimeout);
+  audioEl.pause();
+  audioEl.currentTime = 0;           // rewind :contentReference[oaicite:7]{index=7}
+  audioEl.playbackRate = 1.0;        // normal speed :contentReference[oaicite:8]{index=8}
+});
 
 function loop() {
   ctx.clearRect(0, 0, W, H);
   drawRing();
   ball.update();
   ball.draw(ctx);
+  drawSpeed();
   requestAnimationFrame(loop);
 }
 
