@@ -1,22 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Single Circle Bounce with Megalovania</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <canvas id="canvas"></canvas>
-  <div id="info">Bounces: 0</div>
+html, body {
+  margin: 0; height: 100%; overflow: hidden;
+  background: #000; color: #fff; font-family: sans-serif;
+}
+#canvas { display: block; }
+#info {
+  position: absolute; bottom: 10px; width: 100%;
+  text-align: center; font-size: 1.2em;
+}
 
-  <!-- Hidden audio sprite; crossorigin for seeking -->
-  <audio
-    id="megalovania"
-    src="https://cdn-1.files.vc/files/0mt/931d673a90097145826d8962f1ec4f6c.mp3?md5=f9425cb071bb5b4f21b86a22eba2b4ea&t=1748008213511&o=Dh0YFQAUWUxLGgkGG0sEFw&a=t"
-    preload="auto"
-    crossorigin="anonymous"
-  ></audio>
-
-  <script src="script.js"></script>
-</body>
-</html>
+#resetButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 8px 12px;
+  font-size: 14px;
+  z-index: 10;
+  cursor: pointer;
+}
